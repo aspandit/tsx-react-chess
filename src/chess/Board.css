@@ -1,0 +1,31 @@
+.rowCoordinate {
+    display: table-cell;
+    border: #ffffff 0.1rem solid;
+    width: 1rem;
+    height: 2rem;
+    vertical-align: middle;
+}
+
+.cornerCoordinate {
+    display: table-cell;
+    border: #ffffff 0.1rem solid;
+    width: 1rem;
+    height: 1rem;
+}
+
+.columnCoordinate {
+    display: table-cell;
+    border: #ffffff 0.1rem solid;
+    width: 2rem;
+    height: 1rem;
+    horiz-align: center;
+}
+
+.square {
+    display: table-cell;
+    border: #000000 0.1rem solid;
+    width: 2rem;
+    height: 1rem;
+    vertical-align: middle;
+    horiz-align: center;
+}
