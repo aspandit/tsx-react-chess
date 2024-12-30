@@ -1,3 +1,10 @@
+:root {
+    --square-border-thickness: 0.05em;
+    --square-width: 4em;
+    --square-height: 4em;
+    --piece-size: 2em;
+}
+
 .board {
     display: table-cell;
 }
@@ -27,26 +34,27 @@
 
 .square {
     display: table-cell;
-    border: #000000 0.05em solid;
+    border: #000000 var(--square-border-thickness) solid;
     vertical-align: middle;
     horiz-align: center;
-    height: 2em;
-    width: 2em;
+    height: var(--square-height);
+    width: var(--square-width);
 }
 
 .square-inner {
-    border: #ffffff 0.05em solid;
+    border: #ffffff var(--square-border-thickness) solid;
     display: inline-block;
     width: 80%;
     height: 80%;
     vertical-align: middle;
     horiz-align: center;
+    font-size: var(--piece-size);
 }
 
 .square-inner:hover {
-    border: #777777 0.05em solid;
+    border: #777777 var(--square-border-thickness) solid;
 }
 
 .square-inner-selected {
-    border: #000000 0.05em solid !important;
+    border: #000000 var(--square-border-thickness) solid !important;
 }
