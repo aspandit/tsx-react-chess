@@ -1,31 +1,52 @@
+.board {
+    display: table-cell;
+}
+
+.row {
+    display: table-row;
+}
+
 .rowCoordinate {
     display: table-cell;
-    border: #ffffff 0.1rem solid;
-    width: 1rem;
-    height: 2rem;
+    border: #ffffff 0.1em solid;
     vertical-align: middle;
+    horiz-align: center;
 }
 
 .cornerCoordinate {
     display: table-cell;
-    border: #ffffff 0.1rem solid;
-    width: 1rem;
-    height: 1rem;
+    border: #ffffff 0.1em solid;
 }
 
 .columnCoordinate {
     display: table-cell;
-    border: #ffffff 0.1rem solid;
-    width: 2rem;
-    height: 1rem;
+    border: #ffffff 0.1em solid;
     horiz-align: center;
+    vertical-align: middle;
 }
 
 .square {
     display: table-cell;
-    border: #000000 0.1rem solid;
-    width: 2rem;
-    height: 1rem;
+    border: #000000 0.05em solid;
     vertical-align: middle;
     horiz-align: center;
+    height: 2em;
+    width: 2em;
+}
+
+.square-inner {
+    border: #ffffff 0.05em solid;
+    display: inline-block;
+    width: 80%;
+    height: 80%;
+    vertical-align: middle;
+    horiz-align: center;
+}
+
+.square-inner:hover {
+    border: #000000 0.05em solid;
+}
+
+.square-inner-selected {
+    border: #000000 0.05em solid;
 }

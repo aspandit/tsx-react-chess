@@ -17,7 +17,7 @@ const board = [
 export default function Board() {
 
     return (
-        <>
+        <div className={"board"}>
             {
                 rowCoordinates.map((coord, idx) => <Row className={"row"} key={coord} coordinate={coord}
                                                         row={board[idx]}/>)
@@ -27,19 +27,19 @@ export default function Board() {
                 colCoordinates.map((coord) => <Coordinate className={"columnCoordinate"} key={coord}
                                                           coordinate={coord}/>)
             }
-        </>
+        </div>
     );
 }
 
 function Row(props) {
     return (
-        <div>
+        <span className={"row"}>
             <Coordinate className={"rowCoordinate"} coordinate={props.coordinate} row={props.row}/>
             {
-                props.row.map((sq, idx) => (<Square className={"square"} key={colCoordinates[idx] + props.coordinate}
+                props.row.map((sq, idx) => (<Square key={colCoordinates[idx] + props.coordinate}
                                                     coordinate={props.coordinate} content={sq}/>))
             }
-        </div>
+        </span>
     );
 }
 
@@ -53,7 +53,19 @@ function Coordinate(props) {
 
 function Square(props) {
     return (
-        <span className={props.className}>
+        <span className={"square"}>
+            <SquareInner className={props.className} content={props.content}/>
+        </span>
+    );
+}
+
+function SquareInner(props) {
+    function onClick(el) {
+        el.target.classList.toggle("square-inner-selected");
+    }
+
+    return (
+        <span className={"square-inner"} onClick={onClick}>
           {props.content}
         </span>
     );
