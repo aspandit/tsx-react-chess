@@ -23,14 +23,18 @@ export default function Board() {
 
     return (
         <SelectionContext.Provider value={{selection, setSelection}}>
+            {/*Generate board top-left to lower-right*/}
             <div className={"board"}>
+                {/*Generate rows*/}
                 {
                     rowCoordinates.map((coord, idx) => <Row className={"row"} key={coord} coordinate={coord}
                                                             row={board[idx]}/>)
                 }
-                <Coordinate className={"cornerCoordinate"} key={" "} coordinate={" "}/>
+                {/*Generate lower-left coordinate label*/}
+                <CoordinateLabel className={"cornerCoordinate"} key={" "} coordinate={" "}/>
+                {/*Generate row of column coordinate labels*/}
                 {
-                    colCoordinates.map((coord) => <Coordinate className={"columnCoordinate"} key={coord}
+                    colCoordinates.map((coord) => <CoordinateLabel className={"columnCoordinate"} key={coord}
                                                               coordinate={coord}/>)
                 }
             </div>
@@ -41,7 +45,7 @@ export default function Board() {
 function Row(props) {
     return (
         <span className={"row"}>
-            <Coordinate className={"rowCoordinate"} coordinate={props.coordinate} row={props.row}/>
+            <CoordinateLabel className={"rowCoordinate"} coordinate={props.coordinate} row={props.row}/>
             {
                 props.row.map((sq, idx) => (<Square key={colCoordinates[idx] + props.coordinate}
                                                     coordinate={colCoordinates[idx] + props.coordinate} content={sq}/>))
@@ -50,7 +54,7 @@ function Row(props) {
     );
 }
 
-function Coordinate(props) {
+function CoordinateLabel(props) {
     return (
         <span className={props.className}>
                 {props.coordinate}
