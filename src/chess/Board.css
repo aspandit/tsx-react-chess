@@ -44,9 +44,9 @@
 }
 
 .square-inner:hover {
-    border: #000000 0.05em solid;
+    border: #777777 0.05em solid;
 }
 
 .square-inner-selected {
-    border: #000000 0.05em solid;
+    border: #000000 0.05em solid !important;
 }

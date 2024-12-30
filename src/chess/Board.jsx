@@ -77,8 +77,14 @@ function SquareInner(props) {
             });
         }
 
-        el.classList.add("square-inner-selected");
-        setSelection(coordinate);
+        if(selection === coordinate) {
+            el.classList.remove("square-inner-selected");
+            setSelection(null);
+        }
+        else {
+            el.classList.add("square-inner-selected");
+            setSelection(coordinate);
+        }
     }
 
     return (
