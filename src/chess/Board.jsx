@@ -59,10 +59,14 @@ function Coordinate(props) {
 }
 
 function Square(props) {
-    let coords = props.coordinate.split("");
+    function getColorClass(coordinate) {
+        let coords = coordinate.split("");
+
+        return (coords[0].charCodeAt(0) % 2 ^ coords[1] % 2 ? "white-square" : "black-square");
+    }
 
     return (
-        <span className={"square "+(coords[0].charCodeAt(0) % 2 ^ coords[1] % 2 ? "white-square" : "black-square")} id={props.coordinate}>
+        <span className={"square "+getColorClass(props.coordinate)} id={props.coordinate}>
             <SquareInner className={props.className} content={props.content} coordinate={props.coordinate}/>
         </span>
     );
