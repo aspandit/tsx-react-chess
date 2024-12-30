@@ -1,4 +1,5 @@
 import './Board.css'
+import {createContext, useContext, useState} from "react";
 
 const rowCoordinates = "87654321".split("");
 const colCoordinates = "abcdefgh".split("");
@@ -14,20 +15,26 @@ const board = [
     ["\u2656", "\u2658", "\u2657", "\u2655", "\u2654", "\u2657", "\u2658", "\u2656"]
 ];
 
+const SelectionContext = createContext({});
+
 export default function Board() {
 
+    const [selection, setSelection] = useState(null);
+
     return (
-        <div className={"board"}>
-            {
-                rowCoordinates.map((coord, idx) => <Row className={"row"} key={coord} coordinate={coord}
-                                                        row={board[idx]}/>)
-            }
-            <Coordinate className={"cornerCoordinate"} key={" "} coordinate={" "}/>
-            {
-                colCoordinates.map((coord) => <Coordinate className={"columnCoordinate"} key={coord}
-                                                          coordinate={coord}/>)
-            }
-        </div>
+        <SelectionContext.Provider value={{selection, setSelection}}>
+            <div className={"board"}>
+                {
+                    rowCoordinates.map((coord, idx) => <Row className={"row"} key={coord} coordinate={coord}
+                                                            row={board[idx]}/>)
+                }
+                <Coordinate className={"cornerCoordinate"} key={" "} coordinate={" "}/>
+                {
+                    colCoordinates.map((coord) => <Coordinate className={"columnCoordinate"} key={coord}
+                                                              coordinate={coord}/>)
+                }
+            </div>
+        </SelectionContext.Provider>
     );
 }
 
@@ -53,19 +60,29 @@ function Coordinate(props) {
 
 function Square(props) {
     return (
-        <span className={"square"} data-coordinate={props.coordinate} >
-            <SquareInner className={props.className} content={props.content}/>
+        <span className={"square"} id={props.coordinate}>
+            <SquareInner className={props.className} content={props.content} coordinate={props.coordinate}/>
         </span>
     );
 }
 
 function SquareInner(props) {
-    function onClick(el) {
-        el.target.classList.toggle("square-inner-selected");
+    const {selection, setSelection} = useContext(SelectionContext);
+
+    function squareClick(el, coordinate) {
+        if (selection !== null) {
+            const currSelections = document.getElementById(selection).getElementsByClassName("square-inner");
+            Array.from(currSelections).forEach((sel) => {
+                sel.classList.remove("square-inner-selected");
+            });
+        }
+
+        el.classList.add("square-inner-selected");
+        setSelection(coordinate);
     }
 
     return (
-        <span className={"square-inner"} onClick={onClick}>
+        <span className={"square-inner"} onClick={(event) => squareClick(event.target, props.coordinate)}>
           {props.content}
         </span>
     );
