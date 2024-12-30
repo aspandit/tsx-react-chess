@@ -15,19 +15,20 @@
 
 .rowCoordinate {
     display: table-cell;
-    border: #ffffff 0.1em solid;
+    border: #000000 0.1em solid;
     vertical-align: middle;
     horiz-align: center;
+    padding: 0.5em;
 }
 
 .cornerCoordinate {
     display: table-cell;
-    border: #ffffff 0.1em solid;
+    border: #000000 0.1em solid;
 }
 
 .columnCoordinate {
     display: table-cell;
-    border: #ffffff 0.1em solid;
+    border: #000000 0.1em solid;
     horiz-align: center;
     vertical-align: middle;
 }
