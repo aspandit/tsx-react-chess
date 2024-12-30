@@ -37,7 +37,7 @@ function Row(props) {
             <Coordinate className={"rowCoordinate"} coordinate={props.coordinate} row={props.row}/>
             {
                 props.row.map((sq, idx) => (<Square key={colCoordinates[idx] + props.coordinate}
-                                                    coordinate={props.coordinate} content={sq}/>))
+                                                    coordinate={colCoordinates[idx] + props.coordinate} content={sq}/>))
             }
         </span>
     );
@@ -53,7 +53,7 @@ function Coordinate(props) {
 
 function Square(props) {
     return (
-        <span className={"square"}>
+        <span className={"square"} data-coordinate={props.coordinate} >
             <SquareInner className={props.className} content={props.content}/>
         </span>
     );
