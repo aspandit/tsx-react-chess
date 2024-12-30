@@ -42,8 +42,16 @@
     width: var(--square-width);
 }
 
+.black-square {
+    background-color: #bf1d1d;
+}
+
+.white-square {
+    background-color: #ffffff;
+}
+
 .square-inner {
-    border: #ffffff var(--square-border-thickness) solid;
+    border: var(--square-border-thickness) none;
     display: inline-block;
     width: 80%;
     height: 80%;

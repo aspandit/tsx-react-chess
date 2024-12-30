@@ -59,8 +59,10 @@ function Coordinate(props) {
 }
 
 function Square(props) {
+    let coords = props.coordinate.split("");
+
     return (
-        <span className={"square"} id={props.coordinate}>
+        <span className={"square "+(coords[0].charCodeAt(0) % 2 ^ coords[1] % 2 ? "white-square" : "black-square")} id={props.coordinate}>
             <SquareInner className={props.className} content={props.content} coordinate={props.coordinate}/>
         </span>
     );
