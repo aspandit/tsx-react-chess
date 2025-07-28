@@ -1,8 +1,9 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Chess rules
+- Starting with the white player, each player moves one of their pieces on the board.
+- During each move, a player can choose to capture a piece of the opposite player using one of their pieces or move one of their pieces to an empty location on the board.
+- Moving a piece entails that
+    1. the piece must belong to the moving player
+    2. the movement of the piece must adhere to the legal moves for the piece
+    3. the destination of the move must be empty or contain a piece from the opposing player
+    4. the squares between the source and destination must either be empty or the piece must have the ability to "jump over" obstructing pieces
+    5. the move must not expose the moving player's king to attack
