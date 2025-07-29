@@ -1,23 +1,12 @@
-import './Board.css'
+import './BoardUI.css'
 import {createContext, useContext, useState} from "react";
-
-const rowCoordinates = "87654321".split("");
-const colCoordinates = "abcdefgh".split("");
-
-const board = [
-    ["\u265C", "\u265E", "\u265D", "\u265B", "\u265A", "\u265D", "\u265E", "\u265C"],
-    ["\u265F", "\u265F", "\u265F", "\u265F", "\u265F", "\u265F", "\u265F", "\u265F"],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["\u2659", "\u2659", "\u2659", "\u2659", "\u2659", "\u2659", "\u2659", "\u2659"],
-    ["\u2656", "\u2658", "\u2657", "\u2655", "\u2654", "\u2657", "\u2658", "\u2656"]
-];
+import {BoardLogic} from "../container/BoardLogic.js";
 
 const SelectionContext = createContext({});
 
-export default function Board() {
+export default function BoardUI() {
+
+    const boardLogic = new BoardLogic();
 
     const [selection, setSelection] = useState(null);
 
@@ -27,14 +16,14 @@ export default function Board() {
             <div className={"board"}>
                 {/*Generate rows*/}
                 {
-                    rowCoordinates.map((coord, idx) => <Row className={"row"} key={coord} coordinate={coord}
-                                                            row={board[idx]}/>)
+                    BoardLogic.rowCoordinates.map((coord, idx) => <Row className={"row"} key={coord} coordinate={coord}
+                                                            row={boardLogic.getBoardRow(idx)}/>)
                 }
                 {/*Generate lower-left coordinate label*/}
                 <CoordinateLabel className={"cornerCoordinate"} key={" "} coordinate={" "}/>
                 {/*Generate row of column coordinate labels*/}
                 {
-                    colCoordinates.map((coord) => <CoordinateLabel className={"columnCoordinate"} key={coord}
+                    BoardLogic.colCoordinates.map((coord) => <CoordinateLabel className={"columnCoordinate"} key={coord}
                                                               coordinate={coord}/>)
                 }
             </div>
@@ -47,8 +36,8 @@ function Row(props) {
         <span className={"row"}>
             <CoordinateLabel className={"rowCoordinate"} coordinate={props.coordinate} row={props.row}/>
             {
-                props.row.map((sq, idx) => (<Square key={colCoordinates[idx] + props.coordinate}
-                                                    coordinate={colCoordinates[idx] + props.coordinate} content={sq}/>))
+                props.row.map((sq, idx) => (<Square key={BoardLogic.colCoordinates[idx] + props.coordinate}
+                                                    coordinate={BoardLogic.colCoordinates[idx] + props.coordinate} content={sq}/>))
             }
         </span>
     );
