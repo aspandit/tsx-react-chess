@@ -2,7 +2,7 @@
 //import reactLogo from './assets/react.svg'
 //import viteLogo from '/vite.svg'
 import './App.css'
-import BoardUI from "./chess/presentational/BoardUI.jsx";
+import BoardUI from "./chess/presentational/BoardUI.tsx";
 
 function App() {
     //const [count, setCount] = useState(0)
