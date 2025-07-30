@@ -1,17 +1,36 @@
 import SquareSelection from "./object/Selection";
+import Piece, {PieceColor, PieceType} from "./object/Piece";
 
 export default class BoardModel {
-    private readonly _board: string[][];
+    private readonly _board: Piece[][];
 
-    static initBoard: string[][] = [
-        ["\u265C", "\u265E", "\u265D", "\u265B", "\u265A", "\u265D", "\u265E", "\u265C"],
-        ["\u265F", "\u265F", "\u265F", "\u265F", "\u265F", "\u265F", "\u265F", "\u265F"],
-        ["", "", "", "", "", "", "", ""],
-        ["", "", "", "", "", "", "", ""],
-        ["", "", "", "", "", "", "", ""],
-        ["", "", "", "", "", "", "", ""],
-        ["\u2659", "\u2659", "\u2659", "\u2659", "\u2659", "\u2659", "\u2659", "\u2659"],
-        ["\u2656", "\u2658", "\u2657", "\u2655", "\u2654", "\u2657", "\u2658", "\u2656"]
+    static initBoard: Piece[][] = [
+        [
+            new Piece(PieceType.ROOK,PieceColor.BLACK),
+            new Piece(PieceType.KNIGHT,PieceColor.BLACK),
+            new Piece(PieceType.BISHOP,PieceColor.BLACK),
+            new Piece(PieceType.QUEEN,PieceColor.BLACK),
+            new Piece(PieceType.KING,PieceColor.BLACK),
+            new Piece(PieceType.BISHOP,PieceColor.BLACK),
+            new Piece(PieceType.KNIGHT,PieceColor.BLACK),
+            new Piece(PieceType.ROOK,PieceColor.BLACK)
+        ],
+        new Array(8).fill(new Piece(PieceType.PAWN,PieceColor.BLACK)),
+        new Array(8).fill(new Piece(PieceType.NO_PIECE,PieceColor.NO_PIECE)),
+        new Array(8).fill(new Piece(PieceType.NO_PIECE,PieceColor.NO_PIECE)),
+        new Array(8).fill(new Piece(PieceType.NO_PIECE,PieceColor.NO_PIECE)),
+        new Array(8).fill(new Piece(PieceType.NO_PIECE,PieceColor.NO_PIECE)),
+        new Array(8).fill(new Piece(PieceType.PAWN,PieceColor.WHITE)),
+        [
+            new Piece(PieceType.ROOK,PieceColor.WHITE),
+            new Piece(PieceType.KNIGHT,PieceColor.WHITE),
+            new Piece(PieceType.BISHOP,PieceColor.WHITE),
+            new Piece(PieceType.QUEEN,PieceColor.WHITE),
+            new Piece(PieceType.KING,PieceColor.WHITE),
+            new Piece(PieceType.BISHOP,PieceColor.WHITE),
+            new Piece(PieceType.KNIGHT,PieceColor.WHITE),
+            new Piece(PieceType.ROOK,PieceColor.WHITE)
+        ],
     ];
 
     static rowCoordinates:string[] = "87654321".split("");
@@ -25,28 +44,22 @@ export default class BoardModel {
     }
 
     // TODO create enum/class "Piece" for pieces instead of using string
-    static getPieceColor(piece:string):string {
-        if(["\u2656", "\u2658", "\u2657", "\u2655", "\u2654","\u2659"].indexOf(piece) !== -1) {
-            return "WHITE";
-        }
-        if(["\u265C", "\u265E", "\u265D", "\u265B", "\u265A","\u265F"].indexOf(piece) !== -1) {
-            return "BLACK";
-        }
-        return ""; // TODO raise error here
+    static getPieceColor(piece:Piece):PieceColor {
+        return piece.color // TODO raise error here for color === NO_PIECE
     }
 
-    getBoardSquareContents(coordinate:SquareSelection):string {
+    getBoardSquareContents(coordinate:SquareSelection):Piece {
         const coords = this.parseCoordinate(coordinate);
         return this._board[coords.rowIndex][coords.colIndex];
     }
 
-    setBoardSquareContents(coordinate:SquareSelection, content:string):void {
+    setBoardSquareContents(coordinate:SquareSelection, content:Piece):void {
         const coords = this.parseCoordinate(coordinate);
         this._board[coords.rowIndex][coords.colIndex] = content;
     }
 
-    get board():string[][] {
-        let board:string[][] = [];
+    get board():Piece[][] {
+        let board:Piece[][] = [];
         for(let row of this._board) {
             board.push([...row]);
         }

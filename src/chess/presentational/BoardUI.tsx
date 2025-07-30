@@ -3,6 +3,7 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {GameLogic} from "../container/GameLogic";
 import React from 'react';
 import SquareSelection from "../model/object/Selection";
+import Piece, {NO_PIECE} from "../model/object/Piece";
 
 const SelectionContext = createContext<SquareSelection>("");
 
@@ -26,8 +27,8 @@ export default function Game() {
                 setSelection(coord);
             }
             else { // don't try to move piece unless destination square is empty or has opposing piece
-                const piece: string = gameLogic.movePiece(selection, coord);
-                if (piece !== "") { // if a piece is being moved
+                const piece: Piece = gameLogic.movePiece(selection, coord);
+                if (piece !== NO_PIECE) { // if a piece is being moved
                     setSelection("");
                     gameLogic.toggleTurn();
                 }
@@ -40,7 +41,7 @@ export default function Game() {
     );
 }
 
-function BoardUI(props: {className: string, selection:SquareSelection, board:string[][], onSquareClick:(coord:SquareSelection) => void}) {
+function BoardUI(props: {className: string, selection:SquareSelection, board:Piece[][], onSquareClick:(coord:SquareSelection) => void}) {
     return (
         <SelectionContext.Provider value={props.selection}>
             {/*Generate board top-left to lower-right*/}
@@ -65,12 +66,12 @@ function BoardUI(props: {className: string, selection:SquareSelection, board:str
     );
 }
 
-function Row(props: { className: string, coordinate: string, row: string[], onSquareClick: (coord:SquareSelection) => void }) {
+function Row(props: { className: string, coordinate: string, row: Piece[], onSquareClick: (coord:SquareSelection) => void }) {
     return (
         <span className={"row"}>
             <CoordinateLabel className={"rowCoordinate"} coordinate={props.coordinate}/>
             {
-                props.row.map((sq: string, idx: number) => (
+                props.row.map((sq: Piece, idx: number) => (
                     <Square key={GameLogic.colCoordinates[idx] + props.coordinate}
                             className={props.className} coordinate={GameLogic.colCoordinates[idx] + props.coordinate}
                             content={sq} onSquareClick={props.onSquareClick} />))
@@ -87,7 +88,7 @@ function CoordinateLabel(props: { className: string, coordinate: string }) {
     );
 }
 
-function Square(props: { key: string, className: string, coordinate: string, content: string, onSquareClick: (coord:SquareSelection) => void }) {
+function Square(props: { key: string, className: string, coordinate: string, content: Piece, onSquareClick: (coord:SquareSelection) => void }) {
     function getColorClass(coordinate: string) {
         let coords: string[] = coordinate.split("");
 
@@ -101,7 +102,7 @@ function Square(props: { key: string, className: string, coordinate: string, con
     );
 }
 
-function SquareInner(props: { content: string, coordinate: string, onSquareClick: (coord:SquareSelection) => void }) {
+function SquareInner(props: { content: Piece, coordinate: string, onSquareClick: (coord:SquareSelection) => void }) {
     const selection = useGetSelection();
 
     function squareClick(coordinate: string) {
@@ -124,7 +125,7 @@ function SquareInner(props: { content: string, coordinate: string, onSquareClick
 
     return (
         <span className={"square-inner"} onClick={() => squareClick(props.coordinate)}>
-          {props.content}
+          {props.content.toString()}
         </span>
     );
 }
