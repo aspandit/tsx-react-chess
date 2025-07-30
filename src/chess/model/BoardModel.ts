@@ -1,3 +1,5 @@
+import SquareSelection from "./object/Selection";
+
 export class BoardModel {
     board: string[][];
 
@@ -19,11 +21,20 @@ export class BoardModel {
         this.board = BoardModel.initBoard;
     }
 
-    getBoardSquareContents(coordinate:string):string {
-        return this.board[BoardModel.rowCoordinates.indexOf(coordinate.charAt(0))][BoardModel.colCoordinates.indexOf(coordinate.charAt(1))];
+    getBoardSquareContents(coordinate:SquareSelection):string {
+        const coords = this.parseCoordinate(coordinate);
+        return this.board[coords.rowIndex][coords.colIndex];
     }
 
-    getBoardRow(rowIdx:number):string []{
-        return this.board[rowIdx];
+    setBoardSquareContents(coordinate:SquareSelection, content:string):void {
+        const coords = this.parseCoordinate(coordinate);
+        this.board[coords.rowIndex][coords.colIndex] = content;
+    }
+
+    private parseCoordinate(coordinate:SquareSelection):{rowIndex:number, colIndex:number} {
+        return {
+            rowIndex: BoardModel.rowCoordinates.indexOf(coordinate.toString().charAt(1)),
+            colIndex: BoardModel.colCoordinates.indexOf(coordinate.toString().charAt(0))
+        };
     }
 }

@@ -1,7 +1,8 @@
 import {BoardModel} from "../model/BoardModel";
+import SquareSelection from "../model/object/Selection";
 
 export class BoardLogic {
-    board:BoardModel = new BoardModel();
+    boardModel:BoardModel = new BoardModel();
 
     static get colCoordinates():string[] {
         return BoardModel.colCoordinates;
@@ -11,7 +12,22 @@ export class BoardLogic {
         return BoardModel.rowCoordinates;
     }
 
-    getBoardRow(rowIdx:number):string[] {
-        return this.board.getBoardRow(rowIdx);
+    isSquareOccupied(coord:SquareSelection):boolean {
+        const piece:string = this.boardModel.getBoardSquareContents(coord);
+        return piece !== "";
+    }
+
+    movePiece(from:SquareSelection, to:SquareSelection):string {
+        const piece:string = this.boardModel.getBoardSquareContents(from);
+        if(piece === "") { // do NOT move anything if piece is not selected
+            return "";
+        }
+        this.boardModel.setBoardSquareContents(from, "");
+        this.boardModel.setBoardSquareContents(to, piece);
+        return piece;
+    }
+
+    get board():string[][] {
+        return this.boardModel.board;
     }
 }

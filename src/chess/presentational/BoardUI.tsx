@@ -1,52 +1,53 @@
 import './BoardUI.css'
-import {createContext, useContext, useState} from "react";
+import {createContext, useContext, useEffect, useState} from "react";
 import {BoardLogic} from "../container/BoardLogic.js";
 import React from 'react';
+import SquareSelection from "../model/object/Selection";
 
-// const crossProduct = (arr1, arr2) => {
-//     return arr1.reduce((accumulator, item1) => {
-//         // For each element in arr1, map over arr2 to create pairs
-//         const pairs = arr2.map(item2 => [item1, item2]);
-//         // Concatenate the newly created pairs to the accumulator
-//         return accumulator.concat(pairs);
-//     }, []); // Initialize accumulator as an empty array
-// };
-
-// TODO see if crossProduct above cab be used to generate what is below
-type Selection = "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "a8"
-                    | "b1" | "b2" | "b3" | "b4" | "b5" | "b6" | "b7" | "b8"
-                    | "c1" | "c2" | "c3" | "c4" | "c5" | "c6" | "c7" | "c8"
-                    | "d1" | "d2" | "d3" | "d4" | "d5" | "d6" | "d7" | "d8"
-                    | "e1" | "e2" | "e3" | "e4" | "e5" | "e6" | "e7" | "e8"
-                    | "f1" | "f2" | "f3" | "f4" | "f5" | "f6" | "f7" | "f8"
-                    | "g1" | "g2" | "g3" | "g4" | "g5" | "g6" | "g7" | "g8"
-                    | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "h7" | "h8"
-                    | "";
-
-const SelectionContext = createContext<Selection>("");
+const SelectionContext = createContext<SquareSelection>("");
 
 const useGetSelection = () => useContext(SelectionContext);
 
-export default function BoardUI() {
-
+export default function Game() {
     const boardLogic = new BoardLogic();
 
-    const [selection, setSelection] = useState<Selection>("");
+    const [selection, setSelection] = useState<SquareSelection>("");
 
-    const handleSquareClick = (coord:Selection) => {
-        setSelection(coord);
+    const handleSquareClick = (coord:SquareSelection) => {
+        if(selection === ""){ // no square was previously selected
+            if(boardLogic.isSquareOccupied(coord)) { // initially selected square must have a piece on it
+                setSelection(coord);
+            }
+        }
+        else if(selection === coord) { // the previously selected square was clicked again
+            setSelection("");
+        }
+        else {
+            const piece: string = boardLogic.movePiece(selection, coord);
+            if (piece !== "") { // if a piece is being moved
+                setSelection("");
+            } else {
+                setSelection(coord)
+            }
+        }
     };
 
     return (
-        <SelectionContext.Provider value={selection}>
+      <BoardUI selection={selection} board={boardLogic.board} onSquareClick={handleSquareClick} />
+    );
+}
+
+function BoardUI(props: {selection:SquareSelection, board:string[][], onSquareClick:(coord:SquareSelection) => void}) {
+    return (
+        <SelectionContext.Provider value={props.selection}>
             {/*Generate board top-left to lower-right*/}
             <div className={"board"}>
                 {/*Generate rows*/}
                 {
                     BoardLogic.rowCoordinates.map((coord: string, idx: number) => <Row className={"row"} key={coord}
                                                                                        coordinate={coord}
-                                                                                       row={boardLogic.getBoardRow(idx)}
-                                                                                       onSquareClick={handleSquareClick} />)
+                                                                                       row={props.board[idx]}
+                                                                                       onSquareClick={props.onSquareClick} />)
                 }
                 {/*Generate lower-left coordinate label*/}
                 <CoordinateLabel className={"cornerCoordinate"} key={" "} coordinate={" "}/>
@@ -61,7 +62,7 @@ export default function BoardUI() {
     );
 }
 
-function Row(props: { className: string, coordinate: string, row: string[], onSquareClick: (coord:Selection) => void }) {
+function Row(props: { className: string, coordinate: string, row: string[], onSquareClick: (coord:SquareSelection) => void }) {
     return (
         <span className={"row"}>
             <CoordinateLabel className={"rowCoordinate"} coordinate={props.coordinate}/>
@@ -83,7 +84,7 @@ function CoordinateLabel(props: { className: string, coordinate: string }) {
     );
 }
 
-function Square(props: { key: string, className: string, coordinate: string, content: string, onSquareClick: (coord:Selection) => void }) {
+function Square(props: { key: string, className: string, coordinate: string, content: string, onSquareClick: (coord:SquareSelection) => void }) {
     function getColorClass(coordinate: string) {
         let coords: string[] = coordinate.split("");
 
@@ -97,29 +98,29 @@ function Square(props: { key: string, className: string, coordinate: string, con
     );
 }
 
-function SquareInner(props: { content: string, coordinate: string, onSquareClick: (coord:Selection) => void }) {
+function SquareInner(props: { content: string, coordinate: string, onSquareClick: (coord:SquareSelection) => void }) {
     const selection = useGetSelection();
 
-    function squareClick(el: Element, coordinate: string) {
-        // Clear previous selection(s)
-        if (selection !== "") {
-            const currSelections = document.getElementsByClassName("square-inner-selected");
-            Array.from(currSelections).forEach((sel: Element) => {
-                sel.classList.remove("square-inner-selected");
-            });
-        }
-
-        if (selection === coordinate) { // previously selected coordinate was clicked
-            el.classList.remove("square-inner-selected");
-            props.onSquareClick("");
-        } else { // any other coordinate was selected
-            el.classList.add("square-inner-selected");
-            props.onSquareClick(coordinate as Selection);
-        }
+    function squareClick(coordinate: string) {
+        props.onSquareClick(coordinate as SquareSelection);
     }
 
+    useEffect(() => {
+        // TODO figure out why this is called so many times(and how many times) when a new selection is made. Maybe because selection is at the Game component level? If so, consider using useRef in Game component?
+        // Clear previous selection(s)
+        const currSelections = document.getElementsByClassName("square-inner-selected");
+        Array.from(currSelections).forEach((sel: Element) => {
+            sel.classList.remove("square-inner-selected");
+        });
+
+        // Highlight inner square if new selection was made
+        if (selection !== "") {
+            document.getElementById(selection as string)?.getElementsByClassName("square-inner")[0].classList.add("square-inner-selected");
+        }
+    }, [selection]);
+
     return (
-        <span className={"square-inner"} onClick={(event) => squareClick(event.target as Element, props.coordinate)}>
+        <span className={"square-inner"} onClick={() => squareClick(props.coordinate)}>
           {props.content}
         </span>
     );
