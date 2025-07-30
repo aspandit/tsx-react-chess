@@ -18,7 +18,10 @@ export default class BoardModel {
     static colCoordinates:string[] = "abcdefgh".split("");
 
     constructor() {
-        this._board = BoardModel.initBoard;
+        this._board = [];
+        for(let row of BoardModel.initBoard) {
+            this._board.push([...row]);
+        }
     }
 
     // TODO create enum/class "Piece" for pieces instead of using string
@@ -43,7 +46,11 @@ export default class BoardModel {
     }
 
     get board():string[][] {
-        return [...this._board]; // return copy so changes can't be made by client code
+        let board:string[][] = [];
+        for(let row of this._board) {
+            board.push([...row]);
+        }
+        return board; // return copy so changes can't be made by client code
     }
 
     private parseCoordinate(coordinate:SquareSelection):{rowIndex:number, colIndex:number} {
