@@ -1,0 +1,1 @@
+type Turn = "WHITE" | "BLACK";

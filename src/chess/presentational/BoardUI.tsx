@@ -1,6 +1,6 @@
 import './BoardUI.css'
 import {createContext, useContext, useEffect, useState} from "react";
-import {BoardLogic} from "../container/BoardLogic.js";
+import {GameLogic} from "../container/GameLogic";
 import React from 'react';
 import SquareSelection from "../model/object/Selection";
 
@@ -9,13 +9,12 @@ const SelectionContext = createContext<SquareSelection>("");
 const useGetSelection = () => useContext(SelectionContext);
 
 export default function Game() {
-    const boardLogic = new BoardLogic();
-
+    const [gameLogic,setGameLogic] = useState<GameLogic>(new GameLogic()); // TODO ***determine whether this and other classes need to be function-based***
     const [selection, setSelection] = useState<SquareSelection>("");
 
     const handleSquareClick = (coord:SquareSelection) => {
         if(selection === ""){ // no square was previously selected
-            if(boardLogic.isSquareOccupied(coord)) { // initially selected square must have a piece on it
+            if(gameLogic.isSquareOccupiedByOwnPiece(coord)) { // initially selected square must have the player's own piece on it
                 setSelection(coord);
             }
         }
@@ -23,39 +22,43 @@ export default function Game() {
             setSelection("");
         }
         else {
-            const piece: string = boardLogic.movePiece(selection, coord);
-            if (piece !== "") { // if a piece is being moved
-                setSelection("");
-            } else {
-                setSelection(coord)
+            if(gameLogic.isSquareOccupiedByOwnPiece(coord)) { // set selection to another square with own piece if it was clicked
+                setSelection(coord);
+            }
+            else { // don't try to move piece unless destination square is empty or has opposing piece
+                const piece: string = gameLogic.movePiece(selection, coord);
+                if (piece !== "") { // if a piece is being moved
+                    setSelection("");
+                    gameLogic.toggleTurn();
+                }
             }
         }
     };
 
     return (
-      <BoardUI selection={selection} board={boardLogic.board} onSquareClick={handleSquareClick} />
+      <BoardUI className={"board"} selection={selection} board={gameLogic.board} onSquareClick={handleSquareClick} />
     );
 }
 
-function BoardUI(props: {selection:SquareSelection, board:string[][], onSquareClick:(coord:SquareSelection) => void}) {
+function BoardUI(props: {className: string, selection:SquareSelection, board:string[][], onSquareClick:(coord:SquareSelection) => void}) {
     return (
         <SelectionContext.Provider value={props.selection}>
             {/*Generate board top-left to lower-right*/}
             <div className={"board"}>
                 {/*Generate rows*/}
                 {
-                    BoardLogic.rowCoordinates.map((coord: string, idx: number) => <Row className={"row"} key={coord}
-                                                                                       coordinate={coord}
-                                                                                       row={props.board[idx]}
-                                                                                       onSquareClick={props.onSquareClick} />)
+                    GameLogic.rowCoordinates.map((coord: string, idx: number) => <Row className={"row"} key={coord}
+                                                                                      coordinate={coord}
+                                                                                      row={props.board[idx]}
+                                                                                      onSquareClick={props.onSquareClick} />)
                 }
                 {/*Generate lower-left coordinate label*/}
                 <CoordinateLabel className={"cornerCoordinate"} key={" "} coordinate={" "}/>
                 {/*Generate row of column coordinate labels*/}
                 {
-                    BoardLogic.colCoordinates.map((coord: string) => <CoordinateLabel className={"columnCoordinate"}
-                                                                                      key={coord}
-                                                                                      coordinate={coord}/>)
+                    GameLogic.colCoordinates.map((coord: string) => <CoordinateLabel className={"columnCoordinate"}
+                                                                                     key={coord}
+                                                                                     coordinate={coord}/>)
                 }
             </div>
         </SelectionContext.Provider>
@@ -68,8 +71,8 @@ function Row(props: { className: string, coordinate: string, row: string[], onSq
             <CoordinateLabel className={"rowCoordinate"} coordinate={props.coordinate}/>
             {
                 props.row.map((sq: string, idx: number) => (
-                    <Square key={BoardLogic.colCoordinates[idx] + props.coordinate}
-                            className={props.className} coordinate={BoardLogic.colCoordinates[idx] + props.coordinate}
+                    <Square key={GameLogic.colCoordinates[idx] + props.coordinate}
+                            className={props.className} coordinate={GameLogic.colCoordinates[idx] + props.coordinate}
                             content={sq} onSquareClick={props.onSquareClick} />))
             }
         </span>
