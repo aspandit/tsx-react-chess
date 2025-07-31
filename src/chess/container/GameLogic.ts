@@ -1,7 +1,8 @@
 import BoardModel from "../model/BoardModel";
 import SquareSelection from "../model/object/Selection";
 import GameModel from "../model/GameModel";
-import Piece, {NO_PIECE, PieceColor} from "../model/object/Piece";
+import Piece, {PieceColor} from "../model/object/piece/Piece";
+import {EMPTY_SQUARE} from "../model/object/piece/NoPiece";
 
 export class GameLogic {
     boardModel:BoardModel = new BoardModel();
@@ -21,16 +22,16 @@ export class GameLogic {
 
     isSquareOccupiedByOwnPiece(coord:SquareSelection):boolean {
         const piece:Piece = this.boardModel.getBoardSquareContents(coord);
-        return piece !== NO_PIECE && GameLogic.isOwnPiece(this.gameModel.turn, piece);
+        return piece !== EMPTY_SQUARE && GameLogic.isOwnPiece(this.gameModel.turn, piece);
     }
 
     isSquareOccupiedByOpposingPiece(coord:SquareSelection):boolean {
         const piece:Piece = this.boardModel.getBoardSquareContents(coord);
-        return piece !== NO_PIECE && !GameLogic.isOwnPiece(this.gameModel.turn, piece);
+        return piece !== EMPTY_SQUARE && !GameLogic.isOwnPiece(this.gameModel.turn, piece);
     }
 
     isSquareEmpty(coord:SquareSelection): boolean {
-        return this.boardModel.getBoardSquareContents(coord) === NO_PIECE;
+        return this.boardModel.getBoardSquareContents(coord) === EMPTY_SQUARE;
     }
 
     toggleTurn() {
@@ -39,10 +40,10 @@ export class GameLogic {
 
     movePiece(from:SquareSelection, to:SquareSelection):Piece {
         const piece:Piece = this.boardModel.getBoardSquareContents(from);
-        if(piece === NO_PIECE) { // do NOT move anything if piece is not selected
-            return NO_PIECE;
+        if(piece === EMPTY_SQUARE) { // do NOT move anything if piece is not selected
+            return EMPTY_SQUARE;
         }
-        this.boardModel.setBoardSquareContents(from, NO_PIECE);
+        this.boardModel.setBoardSquareContents(from, EMPTY_SQUARE);
         this.boardModel.setBoardSquareContents(to, piece);
         return piece;
     }

@@ -1,35 +1,42 @@
 import SquareSelection from "./object/Selection";
-import Piece, {PieceColor, PieceType} from "./object/Piece";
+import Piece, {PieceColor} from "./object/piece/Piece";
+import Rook from "./object/piece/Rook";
+import Knight from "./object/piece/Knight";
+import Bishop from "./object/piece/Bishop";
+import Queen from "./object/piece/Queen";
+import King from "./object/piece/King";
+import Pawn from "./object/piece/Pawn";
+import NoPiece from "./object/piece/NoPiece";
 
 export default class BoardModel {
     private readonly _board: Piece[][];
 
     static initBoard: Piece[][] = [
         [
-            new Piece(PieceType.ROOK,PieceColor.BLACK),
-            new Piece(PieceType.KNIGHT,PieceColor.BLACK),
-            new Piece(PieceType.BISHOP,PieceColor.BLACK),
-            new Piece(PieceType.QUEEN,PieceColor.BLACK),
-            new Piece(PieceType.KING,PieceColor.BLACK),
-            new Piece(PieceType.BISHOP,PieceColor.BLACK),
-            new Piece(PieceType.KNIGHT,PieceColor.BLACK),
-            new Piece(PieceType.ROOK,PieceColor.BLACK)
+            new Rook(PieceColor.BLACK),
+            new Knight(PieceColor.BLACK),
+            new Bishop(PieceColor.BLACK),
+            new Queen(PieceColor.BLACK),
+            new King(PieceColor.BLACK),
+            new Bishop(PieceColor.BLACK),
+            new Knight(PieceColor.BLACK),
+            new Rook(PieceColor.BLACK)
         ],
-        new Array(8).fill(new Piece(PieceType.PAWN,PieceColor.BLACK)),
-        new Array(8).fill(new Piece(PieceType.NO_PIECE,PieceColor.NO_PIECE)),
-        new Array(8).fill(new Piece(PieceType.NO_PIECE,PieceColor.NO_PIECE)),
-        new Array(8).fill(new Piece(PieceType.NO_PIECE,PieceColor.NO_PIECE)),
-        new Array(8).fill(new Piece(PieceType.NO_PIECE,PieceColor.NO_PIECE)),
-        new Array(8).fill(new Piece(PieceType.PAWN,PieceColor.WHITE)),
+        new Array(8).fill(new Pawn(PieceColor.BLACK)),
+        new Array(8).fill(new NoPiece(PieceColor.NO_PIECE)),
+        new Array(8).fill(new NoPiece(PieceColor.NO_PIECE)),
+        new Array(8).fill(new NoPiece(PieceColor.NO_PIECE)),
+        new Array(8).fill(new NoPiece(PieceColor.NO_PIECE)),
+        new Array(8).fill(new Pawn(PieceColor.WHITE)),
         [
-            new Piece(PieceType.ROOK,PieceColor.WHITE),
-            new Piece(PieceType.KNIGHT,PieceColor.WHITE),
-            new Piece(PieceType.BISHOP,PieceColor.WHITE),
-            new Piece(PieceType.QUEEN,PieceColor.WHITE),
-            new Piece(PieceType.KING,PieceColor.WHITE),
-            new Piece(PieceType.BISHOP,PieceColor.WHITE),
-            new Piece(PieceType.KNIGHT,PieceColor.WHITE),
-            new Piece(PieceType.ROOK,PieceColor.WHITE)
+            new Rook(PieceColor.WHITE),
+            new Knight(PieceColor.WHITE),
+            new Bishop(PieceColor.WHITE),
+            new Queen(PieceColor.WHITE),
+            new King(PieceColor.WHITE),
+            new Bishop(PieceColor.WHITE),
+            new Knight(PieceColor.WHITE),
+            new Rook(PieceColor.WHITE)
         ],
     ];
 

@@ -3,7 +3,8 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {GameLogic} from "../container/GameLogic";
 import React from 'react';
 import SquareSelection from "../model/object/Selection";
-import Piece, {NO_PIECE} from "../model/object/Piece";
+import Piece from "../model/object/piece/Piece";
+import {EMPTY_SQUARE} from "../model/object/piece/NoPiece";
 
 const SelectionContext = createContext<SquareSelection>("");
 
@@ -28,7 +29,7 @@ export default function Game() {
             }
             else { // don't try to move piece unless destination square is empty or has opposing piece
                 const piece: Piece = gameLogic.movePiece(selection, coord);
-                if (piece !== NO_PIECE) { // if a piece is being moved
+                if (piece !== EMPTY_SQUARE) { // if a piece is being moved
                     setSelection("");
                     gameLogic.toggleTurn();
                 }
