@@ -1,5 +1,4 @@
-import SquareSelection from "./object/Selection";
-import Piece, {PieceColor} from "./object/piece/Piece";
+import Piece, {PieceColor} from "./object/piece/interface/Piece";
 import Rook from "./object/piece/Rook";
 import Knight from "./object/piece/Knight";
 import Bishop from "./object/piece/Bishop";
@@ -43,25 +42,31 @@ export default class BoardModel {
     static rowCoordinates:string[] = "87654321".split("");
     static colCoordinates:string[] = "abcdefgh".split("");
 
-    constructor() {
+    constructor(initBoard:Piece[][] = BoardModel.initBoard) {
         this._board = [];
-        for(let row of BoardModel.initBoard) {
+        for(let row of initBoard) {
             this._board.push([...row]);
         }
     }
 
-    // TODO create enum/class "Piece" for pieces instead of using string
     static getPieceColor(piece:Piece):PieceColor {
         return piece.color // TODO raise error here for color === NO_PIECE
     }
 
-    getBoardSquareContents(coordinate:SquareSelection):Piece {
-        const coords = this.parseCoordinate(coordinate);
+    static parseCoordinate(coordinate:Coordinate):ParsedCoordinate {
+        return {
+            rowIndex: BoardModel.rowCoordinates.indexOf(coordinate.toString().charAt(1)),
+            colIndex: BoardModel.colCoordinates.indexOf(coordinate.toString().charAt(0))
+        };
+    }
+
+    getBoardSquareContents(coordinate:Coordinate):Piece {
+        const coords = BoardModel.parseCoordinate(coordinate);
         return this._board[coords.rowIndex][coords.colIndex];
     }
 
-    setBoardSquareContents(coordinate:SquareSelection, content:Piece):void {
-        const coords = this.parseCoordinate(coordinate);
+    setBoardSquareContents(coordinate:Coordinate, content:Piece):void {
+        const coords = BoardModel.parseCoordinate(coordinate);
         this._board[coords.rowIndex][coords.colIndex] = content;
     }
 
@@ -71,12 +76,5 @@ export default class BoardModel {
             board.push([...row]);
         }
         return board; // return copy so changes can't be made by client code
-    }
-
-    private parseCoordinate(coordinate:SquareSelection):{rowIndex:number, colIndex:number} {
-        return {
-            rowIndex: BoardModel.rowCoordinates.indexOf(coordinate.toString().charAt(1)),
-            colIndex: BoardModel.colCoordinates.indexOf(coordinate.toString().charAt(0))
-        };
     }
 }

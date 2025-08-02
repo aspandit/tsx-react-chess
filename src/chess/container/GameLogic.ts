@@ -1,8 +1,8 @@
 import BoardModel from "../model/BoardModel";
-import SquareSelection from "../model/object/Selection";
 import GameModel from "../model/GameModel";
-import Piece, {PieceColor} from "../model/object/piece/Piece";
-import {EMPTY_SQUARE} from "../model/object/piece/NoPiece";
+import Piece, {PieceColor} from "../model/object/piece/interface/Piece";
+import {NO_PIECE} from "../model/object/piece/NoPiece";
+import {isEqual} from "../utils/Utils";
 
 export class GameLogic {
     boardModel:BoardModel = new BoardModel();
@@ -20,35 +20,47 @@ export class GameLogic {
         return turn === PieceColor[piece.color];
     }
 
-    isSquareOccupiedByOwnPiece(coord:SquareSelection):boolean {
+    isSquareOccupiedByOwnPiece(coord:Coordinate):boolean {
         const piece:Piece = this.boardModel.getBoardSquareContents(coord);
-        return piece !== EMPTY_SQUARE && GameLogic.isOwnPiece(this.gameModel.turn, piece);
+        return piece !== NO_PIECE && GameLogic.isOwnPiece(this.gameModel.turn, piece);
     }
 
-    isSquareOccupiedByOpposingPiece(coord:SquareSelection):boolean {
+    isSquareOccupiedByOpposingPiece(coord:Coordinate):boolean {
         const piece:Piece = this.boardModel.getBoardSquareContents(coord);
-        return piece !== EMPTY_SQUARE && !GameLogic.isOwnPiece(this.gameModel.turn, piece);
+        return piece !== NO_PIECE && !GameLogic.isOwnPiece(this.gameModel.turn, piece);
     }
 
-    isSquareEmpty(coord:SquareSelection): boolean {
-        return this.boardModel.getBoardSquareContents(coord) === EMPTY_SQUARE;
+    isSquareEmpty(coord:Coordinate): boolean {
+        return this.boardModel.getBoardSquareContents(coord) === NO_PIECE;
     }
 
-    toggleTurn() {
-        this.gameModel.toggleTurn();
-    }
-
-    movePiece(from:SquareSelection, to:SquareSelection):Piece {
+    movePiece(from:Coordinate, to:Coordinate):boolean {
         const piece:Piece = this.boardModel.getBoardSquareContents(from);
-        if(piece === EMPTY_SQUARE) { // do NOT move anything if piece is not selected
-            return EMPTY_SQUARE;
+        // TODO Add logic in if condition that checks gameModel for conditions for castling, en passant, and two moves ahead for pawn
+        if(!isEqual(piece,NO_PIECE) && piece.isMoveValid(this.boardModel.board,from,to)) {
+            this.boardModel.setBoardSquareContents(from, NO_PIECE);
+            this.boardModel.setBoardSquareContents(to, piece);
+            this.toggleTurn();
+            return true; // TODO make piece object for presentation/container; return captured piece or no piece to UI
         }
-        this.boardModel.setBoardSquareContents(from, EMPTY_SQUARE);
-        this.boardModel.setBoardSquareContents(to, piece);
-        return piece;
+        return false; // TODO think about passing back more info for this case(no move made)
     }
 
-    get board():Piece[][] {
-        return this.boardModel.board;
+    get boardStringView():string[][] {
+        const bsv:string[][] = [];
+
+        for(const row of this.boardModel.board) {
+            const arr:string[] = [];
+            for(const sq of row) {
+                arr.push(sq.label)
+            }
+            bsv.push(arr);
+        }
+
+        return bsv;
+    }
+
+    private toggleTurn() {
+        this.gameModel.toggleTurn();
     }
 }

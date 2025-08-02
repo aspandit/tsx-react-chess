@@ -1,4 +1,4 @@
-import Piece, {PieceColor, PieceType} from "./Piece";
+import Piece, {PieceColor, PieceType} from "./interface/Piece";
 
 export default class NoPiece extends Piece {
     constructor(color:PieceColor) {
@@ -6,4 +6,4 @@ export default class NoPiece extends Piece {
     }
 }
 
-export const EMPTY_SQUARE:Piece = new NoPiece(PieceColor.NO_PIECE);
+export const NO_PIECE:Piece = new NoPiece(PieceColor.NO_PIECE);
