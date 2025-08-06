@@ -31,7 +31,7 @@ export default abstract class Piece {
         return this._pieceLabel;
     }
 
-    isMoveValid(board:Piece[][], from:Coordinate, to:Coordinate):boolean {
+    isMoveValid(board:Piece[][], from:BoardLocation, to:BoardLocation):boolean {
         // Any one of the moves needs to be valid
         return this._moves.reduce((acc,curr) => {
             console.info(acc);

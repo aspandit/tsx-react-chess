@@ -26,11 +26,11 @@ export default class GameModel {
         return this._boardModel.board;
     }
 
-    getBoardSquareContents(coord: Coordinate) {
+    getBoardSquareContents(coord: BoardLocation) {
         return this._boardModel.getBoardSquareContents(coord);
     }
 
-    setBoardSquareContents(coord: Coordinate, piece: Piece) {
+    setBoardSquareContents(coord: BoardLocation, piece: Piece) {
         this._boardModel.setBoardSquareContents(coord, piece);
     }
 }

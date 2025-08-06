@@ -19,21 +19,21 @@ export class GameLogic {
         return turn === PieceColor[piece.color];
     }
 
-    isSquareOccupiedByOwnPiece(coord:Coordinate):boolean {
+    isSquareOccupiedByOwnPiece(coord:BoardLocation):boolean {
         const piece:Piece = this.gameModel.getBoardSquareContents(coord);
         return piece !== NO_PIECE && GameLogic.isOwnPiece(this.gameModel.turn, piece);
     }
 
-    isSquareOccupiedByOpposingPiece(coord:Coordinate):boolean {
+    isSquareOccupiedByOpposingPiece(coord:BoardLocation):boolean {
         const piece:Piece = this.gameModel.getBoardSquareContents(coord);
         return piece !== NO_PIECE && !GameLogic.isOwnPiece(this.gameModel.turn, piece);
     }
 
-    isSquareEmpty(coord:Coordinate): boolean {
+    isSquareEmpty(coord:BoardLocation): boolean {
         return this.gameModel.getBoardSquareContents(coord) === NO_PIECE;
     }
 
-    movePiece(from:Coordinate, to:Coordinate):boolean {
+    movePiece(from:BoardLocation, to:BoardLocation):boolean {
         const piece:Piece = this.gameModel.getBoardSquareContents(from);
         // TODO Add logic in if condition that checks gameModel for conditions for castling, en passant, and two moves ahead for pawn
         if(!isEqual(piece,NO_PIECE) && piece.isMoveValid(this.gameModel.board,from,to)) {

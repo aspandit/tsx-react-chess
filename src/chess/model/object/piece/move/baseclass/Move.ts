@@ -26,9 +26,9 @@ export default abstract class Move {
      * @param from the starting coordinate for the move
      * @param to the ending coordinate for the move
      */
-    isValid(board:Piece[][],from:Coordinate,to:Coordinate):boolean {
-        const fromObj:ParsedCoordinate = BoardModel.parseCoordinate(from);
-        const toObj:ParsedCoordinate = BoardModel.parseCoordinate(to);
+    isValid(board:Piece[][], from:BoardLocation, to:BoardLocation):boolean {
+        const fromObj:ParsedBoardLocation = BoardModel.parseCoordinate(from);
+        const toObj:ParsedBoardLocation = BoardModel.parseCoordinate(to);
 
         const toSquareContents:Piece = board[toObj.rowIndex][toObj.colIndex];
         const pathShapeCorrect = this.isPathShapeCorrect(fromObj,toObj);
@@ -40,7 +40,7 @@ export default abstract class Move {
             && ((this._captureOptional || capturing) || (this._captureProhibited && !capturing)));
     }
 
-    protected isPathShapeCorrect(from:ParsedCoordinate,to:ParsedCoordinate):boolean {
+    protected isPathShapeCorrect(from:ParsedBoardLocation, to:ParsedBoardLocation):boolean {
         return !(from.rowIndex == to.rowIndex && from.colIndex == to.colIndex); // shape is not correct if no move was made
     }
     /**
@@ -50,7 +50,7 @@ export default abstract class Move {
      * @param from
      * @param to
      */
-    abstract getPath(board:Piece[][],from:ParsedCoordinate,to:ParsedCoordinate):Piece[];
+    abstract getPath(board:Piece[][], from:ParsedBoardLocation, to:ParsedBoardLocation):Piece[];
 
     isPathClear(path: Piece[]): boolean {
         return path.reduce((accum, val) => accum && isEqual(val,NO_PIECE),true);

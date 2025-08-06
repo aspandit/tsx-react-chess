@@ -8,7 +8,7 @@
 // };
 
 // TODO see if crossProduct above can be used to generate what is below
-type Coordinate = "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "a8"
+type BoardLocation = "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "a8"
     | "b1" | "b2" | "b3" | "b4" | "b5" | "b6" | "b7" | "b8"
     | "c1" | "c2" | "c3" | "c4" | "c5" | "c6" | "c7" | "c8"
     | "d1" | "d2" | "d3" | "d4" | "d5" | "d6" | "d7" | "d8"
@@ -18,7 +18,7 @@ type Coordinate = "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "a8"
     | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "h7" | "h8"
     | "";
 
-type ParsedCoordinate = {
+type ParsedBoardLocation = {
     rowIndex:number,
     colIndex:number,
 };

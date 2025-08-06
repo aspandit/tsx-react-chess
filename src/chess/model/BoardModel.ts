@@ -53,19 +53,19 @@ export default class BoardModel {
         return piece.color // TODO raise error here for color === NO_PIECE
     }
 
-    static parseCoordinate(coordinate:Coordinate):ParsedCoordinate {
+    static parseCoordinate(coordinate:BoardLocation):ParsedBoardLocation {
         return {
             rowIndex: BoardModel.rowCoordinates.indexOf(coordinate.toString().charAt(1)),
             colIndex: BoardModel.colCoordinates.indexOf(coordinate.toString().charAt(0))
         };
     }
 
-    getBoardSquareContents(coordinate:Coordinate):Piece {
+    getBoardSquareContents(coordinate:BoardLocation):Piece {
         const coords = BoardModel.parseCoordinate(coordinate);
         return this._board[coords.rowIndex][coords.colIndex];
     }
 
-    setBoardSquareContents(coordinate:Coordinate, content:Piece):void {
+    setBoardSquareContents(coordinate:BoardLocation, content:Piece):void {
         const coords = BoardModel.parseCoordinate(coordinate);
         this._board[coords.rowIndex][coords.colIndex] = content;
     }

@@ -3,15 +3,15 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {GameLogic} from "../container/GameLogic";
 import React from 'react';
 
-const SelectionContext = createContext<Coordinate>("");
+const SelectionContext = createContext<BoardLocation>("");
 
 const useGetSelection = () => useContext(SelectionContext);
 
 export default function Game() {
     const [gameLogic,setGameLogic] = useState<GameLogic>(new GameLogic()); // TODO ***determine whether this and other classes need to be function-based***
-    const [selection, setSelection] = useState<Coordinate>("");
+    const [selection, setSelection] = useState<BoardLocation>("");
 
-    const handleSquareClick = (coord:Coordinate) => {
+    const handleSquareClick = (coord:BoardLocation) => {
         if(selection === ""){ // no square was previously selected
             if(gameLogic.isSquareOccupiedByOwnPiece(coord)) { // initially selected square must have the player's own piece on it
                 setSelection(coord);
@@ -37,7 +37,7 @@ export default function Game() {
     );
 }
 
-function BoardUI(props: {className: string, selection:Coordinate, board:string[][], onSquareClick:(coord:Coordinate) => void}) {
+function BoardUI(props: {className: string, selection:BoardLocation, board:string[][], onSquareClick:(coord:BoardLocation) => void}) {
     return (
         <SelectionContext.Provider value={props.selection}>
             {/*Generate board top-left to lower-right*/}
@@ -62,7 +62,7 @@ function BoardUI(props: {className: string, selection:Coordinate, board:string[]
     );
 }
 
-function Row(props: { className: string, coordinate: string, row: string[], onSquareClick: (coord:Coordinate) => void }) {
+function Row(props: { className: string, coordinate: string, row: string[], onSquareClick: (coord:BoardLocation) => void }) {
     return (
         <span className={"row"}>
             <CoordinateLabel className={"rowCoordinate"} coordinate={props.coordinate}/>
@@ -84,7 +84,7 @@ function CoordinateLabel(props: { className: string, coordinate: string }) {
     );
 }
 
-function Square(props: { key: string, className: string, coordinate: string, content: string, onSquareClick: (coord:Coordinate) => void }) {
+function Square(props: { key: string, className: string, coordinate: string, content: string, onSquareClick: (coord:BoardLocation) => void }) {
     function getColorClass(coordinate: string) {
         let coords: string[] = coordinate.split("");
 
@@ -98,11 +98,11 @@ function Square(props: { key: string, className: string, coordinate: string, con
     );
 }
 
-function SquareInner(props: { content: string, coordinate: string, onSquareClick: (coord:Coordinate) => void }) {
+function SquareInner(props: { content: string, coordinate: string, onSquareClick: (coord:BoardLocation) => void }) {
     const selection = useGetSelection();
 
     function squareClick(coordinate: string) {
-        props.onSquareClick(coordinate as Coordinate);
+        props.onSquareClick(coordinate as BoardLocation);
     }
 
     useEffect(() => {
