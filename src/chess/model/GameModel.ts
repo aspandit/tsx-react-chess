@@ -1,4 +1,8 @@
+import BoardModel from "./BoardModel";
+import Piece from "./object/piece/baseclass/Piece";
+
 export default class GameModel {
+    private _boardModel:BoardModel = new BoardModel();
     private _turn: Turn = "WHITE";
 
     toggleTurn() {
@@ -16,5 +20,17 @@ export default class GameModel {
 
     set turn(turn: Turn) {
         this._turn = turn;
+    }
+
+    get board():Piece[][] {
+        return this._boardModel.board;
+    }
+
+    getBoardSquareContents(coord: Coordinate) {
+        return this._boardModel.getBoardSquareContents(coord);
+    }
+
+    setBoardSquareContents(coord: Coordinate, piece: Piece) {
+        this._boardModel.setBoardSquareContents(coord, piece);
     }
 }
