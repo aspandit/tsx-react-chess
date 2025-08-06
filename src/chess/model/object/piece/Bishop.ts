@@ -1,4 +1,4 @@
-import Piece, {PieceColor, PieceType} from "./interface/Piece";
+import Piece, {PieceColor, PieceType} from "./baseclass/Piece";
 import Diagonal from "./move/Diagonal";
 import {Direction} from "../Direction";
 

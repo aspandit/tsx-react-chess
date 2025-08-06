@@ -1,4 +1,4 @@
-import Piece from "../../interface/Piece";
+import Piece from "../../baseclass/Piece";
 import BoardModel from "../../../../BoardModel";
 import {NO_PIECE} from "../../NoPiece";
 import {Direction} from "../../../Direction";

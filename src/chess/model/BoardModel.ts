@@ -1,4 +1,4 @@
-import Piece, {PieceColor} from "./object/piece/interface/Piece";
+import Piece, {PieceColor} from "./object/piece/baseclass/Piece";
 import Rook from "./object/piece/Rook";
 import Knight from "./object/piece/Knight";
 import Bishop from "./object/piece/Bishop";

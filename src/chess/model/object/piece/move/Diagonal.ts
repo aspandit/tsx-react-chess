@@ -1,5 +1,5 @@
-import Piece from "../interface/Piece";
-import Move from "./interface/Move";
+import Piece from "../baseclass/Piece";
+import Move from "./baseclass/Move";
 import {closedInterval, openInterval} from "../../../../utils/Utils";
 
 export default class Diagonal extends Move {

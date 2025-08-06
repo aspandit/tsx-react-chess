@@ -1,4 +1,4 @@
-import Piece, {PieceColor, PieceType} from "./interface/Piece";
+import Piece, {PieceColor, PieceType} from "./baseclass/Piece";
 
 export default class NoPiece extends Piece {
     constructor(color:PieceColor) {

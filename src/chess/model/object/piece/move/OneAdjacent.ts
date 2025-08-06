@@ -1,5 +1,5 @@
-import Piece from "../interface/Piece";
-import Move from "./interface/Move";
+import Piece from "../baseclass/Piece";
+import Move from "./baseclass/Move";
 
 export default class OneAdjacent extends Move {
     isPathShapeCorrect(from: ParsedCoordinate, to: ParsedCoordinate): boolean {

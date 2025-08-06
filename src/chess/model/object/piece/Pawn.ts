@@ -1,4 +1,4 @@
-import Piece, {PieceColor, PieceType} from "./interface/Piece";
+import Piece, {PieceColor, PieceType} from "./baseclass/Piece";
 import OneForward from "./move/OneForward";
 import OneDiagonalForward from "./move/OneDiagonalForward";
 import {Direction} from "../Direction";

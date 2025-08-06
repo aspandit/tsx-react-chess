@@ -1,4 +1,4 @@
-import Move from "../move/interface/Move";
+import Move from "../move/baseclass/Move";
 
 export default abstract class Piece {
     private readonly _pieceLabel:string;

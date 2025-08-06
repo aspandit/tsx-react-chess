@@ -1,6 +1,6 @@
 import BoardModel from "../model/BoardModel";
 import GameModel from "../model/GameModel";
-import Piece, {PieceColor} from "../model/object/piece/interface/Piece";
+import Piece, {PieceColor} from "../model/object/piece/baseclass/Piece";
 import {NO_PIECE} from "../model/object/piece/NoPiece";
 import {isEqual} from "../utils/Utils";
 

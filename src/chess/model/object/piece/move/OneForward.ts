@@ -1,5 +1,5 @@
-import Piece from "../interface/Piece";
-import Move from "./interface/Move";
+import Piece from "../baseclass/Piece";
+import Move from "./baseclass/Move";
 
 export default class OneForward extends Move {
     protected isPathShapeCorrect(from: ParsedCoordinate, to: ParsedCoordinate): boolean {
