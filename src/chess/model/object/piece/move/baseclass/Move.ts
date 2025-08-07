@@ -25,12 +25,12 @@ export default abstract class Move {
      */
     makeMove(boardModel: BoardModel, from: BoardLocation, to: BoardLocation): boolean {
         const board: Piece[][] = boardModel.board;
-        const fromObj: ParsedBoardLocation = BoardModel.parseCoordinate(from);
-        const toObj: ParsedBoardLocation = BoardModel.parseCoordinate(to);
+        const fromLoc: ParsedBoardLocation = BoardModel.parseCoordinate(from);
+        const toLoc: ParsedBoardLocation = BoardModel.parseCoordinate(to);
 
-        const toSquareContents: Piece = board[toObj.rowIndex][toObj.colIndex];
-        const pathShapeCorrect = this.isPathShapeCorrect(fromObj, toObj);
-        const pathClear = this.isPathClear(this.getPath(board, fromObj, toObj));
+        const toSquareContents: Piece = board[toLoc.rowIndex][toLoc.colIndex];
+        const pathShapeCorrect = this.isPathShapeCorrect(fromLoc, toLoc);
+        const pathClear = this.isPathClear(this.getPath(board, fromLoc, toLoc));
         const capturing = this.isCapturing(toSquareContents);
         console.info(`pathShapeCorrect: ${pathShapeCorrect}, pathClear: ${pathClear}, capturing: ${capturing}`);
         if (pathShapeCorrect
