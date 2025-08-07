@@ -4,8 +4,8 @@ import OneDiagonalForward from "./move/OneDiagonalForward";
 import {Direction} from "../Direction";
 
 export default class Pawn extends Piece {
-    constructor(color:PieceColor) {
-        super(PieceType.PAWN,color);
+    constructor(color: PieceColor, initialSquare: BoardLocation) {
+        super(PieceType.PAWN, color, initialSquare);
         this._moves.push(new OneForward(true, true, true,
                 color == PieceColor.WHITE ? Direction.INCREASING : Direction.DECREASING),
             new OneDiagonalForward(false, false, true,

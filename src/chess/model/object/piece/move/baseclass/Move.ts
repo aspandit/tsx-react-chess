@@ -5,12 +5,12 @@ import {Direction} from "../../../Direction";
 import {isEqual} from "../../../../../utils/Utils";
 
 export default abstract class Move {
-    protected _captureOptional:boolean;
-    protected _captureProhibited:boolean;
-    protected _clearPathOptional:boolean;
-    protected _direction:Direction;
+    protected _captureOptional: boolean;
+    protected _captureProhibited: boolean;
+    protected _clearPathOptional: boolean;
+    protected _direction: Direction;
 
-    constructor(captureOptional:boolean,captureProhibited:boolean,clearPathOptional:boolean,direction:Direction) {
+    constructor(captureOptional: boolean, captureProhibited: boolean, clearPathOptional: boolean, direction: Direction) {
         this._captureOptional = captureOptional;
         this._captureProhibited = captureProhibited;
         this._clearPathOptional = clearPathOptional;
@@ -26,13 +26,13 @@ export default abstract class Move {
      * @param from the starting coordinate for the move
      * @param to the ending coordinate for the move
      */
-    isValid(board:Piece[][], from:BoardLocation, to:BoardLocation):boolean {
-        const fromObj:ParsedBoardLocation = BoardModel.parseCoordinate(from);
-        const toObj:ParsedBoardLocation = BoardModel.parseCoordinate(to);
+    isValid(board: Piece[][], from: BoardLocation, to: BoardLocation): boolean {
+        const fromObj: ParsedBoardLocation = BoardModel.parseCoordinate(from);
+        const toObj: ParsedBoardLocation = BoardModel.parseCoordinate(to);
 
-        const toSquareContents:Piece = board[toObj.rowIndex][toObj.colIndex];
-        const pathShapeCorrect = this.isPathShapeCorrect(fromObj,toObj);
-        const pathClear = this.isPathClear(this.getPath(board,fromObj,toObj));
+        const toSquareContents: Piece = board[toObj.rowIndex][toObj.colIndex];
+        const pathShapeCorrect = this.isPathShapeCorrect(fromObj, toObj);
+        const pathClear = this.isPathClear(this.getPath(board, fromObj, toObj));
         const capturing = this.isCapturing(toSquareContents);
         console.info(`pathShapeCorrect: ${pathShapeCorrect}, pathClear: ${pathClear}, capturing: ${capturing}`);
         return (pathShapeCorrect
@@ -40,22 +40,30 @@ export default abstract class Move {
             && ((this._captureOptional || capturing) || (this._captureProhibited && !capturing)));
     }
 
-    protected isPathShapeCorrect(from:ParsedBoardLocation, to:ParsedBoardLocation):boolean {
+    /**
+     * Overridden in concrete classes.
+     * @param from
+     * @param to
+     * @protected
+     */
+    protected isPathShapeCorrect(from: ParsedBoardLocation, to: ParsedBoardLocation): boolean {
         return !(from.rowIndex == to.rowIndex && from.colIndex == to.colIndex); // shape is not correct if no move was made
     }
+
     /**
      * Returns ANY ONE path's pieces from {@link from} to {@link to}.
-     * Path is endpoint exclusive; capture logic checks {@link to} square.
+     * Path should NOT include start and end squares.
      * @param board
      * @param from
      * @param to
      */
-    abstract getPath(board:Piece[][], from:ParsedBoardLocation, to:ParsedBoardLocation):Piece[];
+    abstract getPath(board: Piece[][], from: ParsedBoardLocation, to: ParsedBoardLocation): Piece[];
 
     isPathClear(path: Piece[]): boolean {
-        return path.reduce((accum, val) => accum && isEqual(val,NO_PIECE),true);
+        return path.reduce((accum, val) => accum && isEqual(val, NO_PIECE), true);
     }
+
     isCapturing(toSquareContents: Piece): boolean {
-        return !isEqual(toSquareContents,NO_PIECE);
+        return !isEqual(toSquareContents, NO_PIECE);
     }
 }

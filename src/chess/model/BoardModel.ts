@@ -10,69 +10,69 @@ import NoPiece from "./object/piece/NoPiece";
 export default class BoardModel {
     private readonly _board: Piece[][];
 
+    static rowCoordinates: string[] = "87654321".split("");
+    static colCoordinates: string[] = "abcdefgh".split("");
+
     static initBoard: Piece[][] = [
         [
-            new Rook(PieceColor.BLACK),
-            new Knight(PieceColor.BLACK),
-            new Bishop(PieceColor.BLACK),
-            new Queen(PieceColor.BLACK),
-            new King(PieceColor.BLACK),
-            new Bishop(PieceColor.BLACK),
-            new Knight(PieceColor.BLACK),
-            new Rook(PieceColor.BLACK)
+            new Rook(PieceColor.BLACK, "a8"),
+            new Knight(PieceColor.BLACK, "b8"),
+            new Bishop(PieceColor.BLACK, "c8"),
+            new Queen(PieceColor.BLACK, "d8"),
+            new King(PieceColor.BLACK, "e8"),
+            new Bishop(PieceColor.BLACK, "f8"),
+            new Knight(PieceColor.BLACK, "g8"),
+            new Rook(PieceColor.BLACK, "h8")
         ],
-        new Array(8).fill(new Pawn(PieceColor.BLACK)),
-        new Array(8).fill(new NoPiece(PieceColor.NO_COLOR)),
-        new Array(8).fill(new NoPiece(PieceColor.NO_COLOR)),
-        new Array(8).fill(new NoPiece(PieceColor.NO_COLOR)),
-        new Array(8).fill(new NoPiece(PieceColor.NO_COLOR)),
-        new Array(8).fill(new Pawn(PieceColor.WHITE)),
+        Array(8).fill(null).map((val, idx, array) => new Pawn(PieceColor.BLACK, BoardModel.colCoordinates[idx] + "7" as BoardLocation)),
+        Array(8).fill(new NoPiece(PieceColor.NO_COLOR, "")),
+        Array(8).fill(new NoPiece(PieceColor.NO_COLOR, "")),
+        Array(8).fill(new NoPiece(PieceColor.NO_COLOR, "")),
+        Array(8).fill(new NoPiece(PieceColor.NO_COLOR, "")),
+        Array(8).fill(null).map((val, idx, array) => new Pawn(PieceColor.WHITE, BoardModel.colCoordinates[idx] + "2" as BoardLocation)),
         [
-            new Rook(PieceColor.WHITE),
-            new Knight(PieceColor.WHITE),
-            new Bishop(PieceColor.WHITE),
-            new Queen(PieceColor.WHITE),
-            new King(PieceColor.WHITE),
-            new Bishop(PieceColor.WHITE),
-            new Knight(PieceColor.WHITE),
-            new Rook(PieceColor.WHITE)
+            new Rook(PieceColor.WHITE, "a1"),
+            new Knight(PieceColor.WHITE, "b1"),
+            new Bishop(PieceColor.WHITE, "c1"),
+            new Queen(PieceColor.WHITE, "d1"),
+            new King(PieceColor.WHITE, "e1"),
+            new Bishop(PieceColor.WHITE, "f1"),
+            new Knight(PieceColor.WHITE, "g1"),
+            new Rook(PieceColor.WHITE, "h1")
         ],
     ];
 
-    static rowCoordinates:string[] = "87654321".split("");
-    static colCoordinates:string[] = "abcdefgh".split("");
-
-    constructor(initBoard:Piece[][] = BoardModel.initBoard) {
+    constructor(initBoard: Piece[][] = BoardModel.initBoard) {
         this._board = [];
-        for(let row of initBoard) {
+        for (let row of initBoard) {
             this._board.push([...row]);
         }
     }
 
-    static getPieceColor(piece:Piece):PieceColor {
+    static getPieceColor(piece: Piece): PieceColor {
         return piece.color // TODO raise error here for color === NO_PIECE
     }
 
-    static parseCoordinate(coordinate:BoardLocation):ParsedBoardLocation {
+    static parseCoordinate(coordinate: BoardLocation): ParsedBoardLocation {
         return {
             rowIndex: BoardModel.rowCoordinates.indexOf(coordinate.toString().charAt(1)),
             colIndex: BoardModel.colCoordinates.indexOf(coordinate.toString().charAt(0))
         };
     }
 
-    getBoardSquareContents(coordinate:BoardLocation):Piece {
+    getBoardSquareContents(coordinate: BoardLocation): Piece {
         const coords = BoardModel.parseCoordinate(coordinate);
         return this._board[coords.rowIndex][coords.colIndex];
     }
 
-    setBoardSquareContents(coordinate:BoardLocation, content:Piece):void {
+    setBoardSquareContents(coordinate: BoardLocation, content: Piece): void {
         const coords = BoardModel.parseCoordinate(coordinate);
         this._board[coords.rowIndex][coords.colIndex] = content;
     }
 
-    get board():Piece[][] {
-        let board:Piece[][] = [];
-        for(let row of this._board) {
+    get board(): Piece[][] {
+        let board: Piece[][] = [];
+        for (let row of this._board) {
             board.push([...row]);
         }
         return board; // return copy so changes can't be made by client code
