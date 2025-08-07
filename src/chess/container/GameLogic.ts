@@ -36,9 +36,7 @@ export class GameLogic {
     movePiece(from:BoardLocation, to:BoardLocation):boolean {
         const piece:Piece = this.gameModel.getBoardSquareContents(from);
         // TODO Add logic in if condition that checks gameModel for conditions for castling, en passant, and two moves ahead for pawn
-        if(!isEqual(piece,NO_PIECE) && piece.isMoveValid(this.gameModel.board,from,to)) {
-            this.gameModel.setBoardSquareContents(from, NO_PIECE);
-            this.gameModel.setBoardSquareContents(to, piece);
+        if(!isEqual(piece,NO_PIECE) && piece.makeMove(this.gameModel.boardModel,from,to)) {
             this.toggleTurn();
             return true; // TODO make piece object for presentation/container; return captured piece or no piece to UI
         }

@@ -18,15 +18,13 @@ export default abstract class Move {
     }
 
     /**
-     * Returns true if coordinates for the current move are valid. Ensures that
-     * - path from {@link from} coordinate to {@link to} coordinate adhere to shape described by move,
-     * - path is clear from {@link from} coordinate to {@link to} coordinate if applicable, and
-     * - the {@link to} coordinate contains an opposing piece if required(e.g., pawns can only move diagonally, forward by one when capturing).
-     * @param board the current board configuration
+     * Makes the current move and returns true if valid.
+     * @param boardModel the current board model; the model is needed here because a copy of the board is returned from boardModel.board for safety/encapsulation
      * @param from the starting coordinate for the move
      * @param to the ending coordinate for the move
      */
-    isValid(board: Piece[][], from: BoardLocation, to: BoardLocation): boolean {
+    makeMove(boardModel: BoardModel, from: BoardLocation, to: BoardLocation): boolean {
+        const board: Piece[][] = boardModel.board;
         const fromObj: ParsedBoardLocation = BoardModel.parseCoordinate(from);
         const toObj: ParsedBoardLocation = BoardModel.parseCoordinate(to);
 
@@ -35,9 +33,14 @@ export default abstract class Move {
         const pathClear = this.isPathClear(this.getPath(board, fromObj, toObj));
         const capturing = this.isCapturing(toSquareContents);
         console.info(`pathShapeCorrect: ${pathShapeCorrect}, pathClear: ${pathClear}, capturing: ${capturing}`);
-        return (pathShapeCorrect
+        if (pathShapeCorrect
             && (this._clearPathOptional || pathClear)
-            && ((this._captureOptional || capturing) || (this._captureProhibited && !capturing)));
+            && ((this._captureOptional || capturing) || (this._captureProhibited && !capturing))) {
+            this.doMove(boardModel, from, to);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -59,11 +62,27 @@ export default abstract class Move {
      */
     abstract getPath(board: Piece[][], from: ParsedBoardLocation, to: ParsedBoardLocation): Piece[];
 
-    isPathClear(path: Piece[]): boolean {
+    private isPathClear(path: Piece[]): boolean {
         return path.reduce((accum, val) => accum && isEqual(val, NO_PIECE), true);
     }
 
-    isCapturing(toSquareContents: Piece): boolean {
+    private isCapturing(toSquareContents: Piece): boolean {
         return !isEqual(toSquareContents, NO_PIECE);
+    }
+
+    /**
+     * This method is overridden by subclasses for special moves.
+     * @param boardModel
+     * @param from
+     * @param to
+     * @protected
+     */
+    protected doMove(boardModel: BoardModel, from: BoardLocation, to: BoardLocation) {
+        const board:Piece[][] = boardModel.board;
+        const fromObj = BoardModel.parseCoordinate(from);
+
+        // make the move - order is important HERE
+        boardModel.setBoardSquareContents(to, board[fromObj.rowIndex][fromObj.colIndex]);
+        boardModel.setBoardSquareContents(from, NO_PIECE);
     }
 }

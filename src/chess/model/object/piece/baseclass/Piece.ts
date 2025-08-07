@@ -1,4 +1,5 @@
 import Move from "../move/baseclass/Move";
+import BoardModel from "../../../BoardModel";
 
 export default abstract class Piece {
     private readonly _pieceLabel: string;
@@ -34,11 +35,11 @@ export default abstract class Piece {
         return this._pieceLabel;
     }
 
-    isMoveValid(board: Piece[][], from: BoardLocation, to: BoardLocation): boolean {
+    makeMove(boardModel: BoardModel, from: BoardLocation, to: BoardLocation): boolean {
         // Any one of the moves needs to be valid
         return this._moves.reduce((acc, curr) => {
             console.info(acc);
-            return acc || curr.isValid(board, from, to)
+            return acc || curr.makeMove(boardModel, from, to)
         }, false);
     }
 }

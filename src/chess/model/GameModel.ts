@@ -26,6 +26,10 @@ export default class GameModel {
         return this._boardModel.board;
     }
 
+    get boardModel():BoardModel {
+        return this._boardModel;
+    }
+
     getBoardSquareContents(coord: BoardLocation) {
         return this._boardModel.getBoardSquareContents(coord);
     }
