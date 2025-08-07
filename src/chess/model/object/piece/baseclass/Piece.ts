@@ -42,7 +42,7 @@ export default abstract class Piece {
 
 // TODO Write tests: Numbering is important here and should NOT be changed
 export enum PieceType {
-    NO_PIECE = -1,
+    NO_TYPE = -1,
     KING = 0,
     QUEEN = 1,
     ROOK = 2,
@@ -53,7 +53,7 @@ export enum PieceType {
 
 // TODO Write tests: Numbering is important here and should NOT be changed
 export enum PieceColor {
-    NO_PIECE = -1,
+    NO_COLOR = -1,
     WHITE = 0x2654,
     BLACK = 0x265A
 }

@@ -22,10 +22,10 @@ export default class BoardModel {
             new Rook(PieceColor.BLACK)
         ],
         new Array(8).fill(new Pawn(PieceColor.BLACK)),
-        new Array(8).fill(new NoPiece(PieceColor.NO_PIECE)),
-        new Array(8).fill(new NoPiece(PieceColor.NO_PIECE)),
-        new Array(8).fill(new NoPiece(PieceColor.NO_PIECE)),
-        new Array(8).fill(new NoPiece(PieceColor.NO_PIECE)),
+        new Array(8).fill(new NoPiece(PieceColor.NO_COLOR)),
+        new Array(8).fill(new NoPiece(PieceColor.NO_COLOR)),
+        new Array(8).fill(new NoPiece(PieceColor.NO_COLOR)),
+        new Array(8).fill(new NoPiece(PieceColor.NO_COLOR)),
         new Array(8).fill(new Pawn(PieceColor.WHITE)),
         [
             new Rook(PieceColor.WHITE),
