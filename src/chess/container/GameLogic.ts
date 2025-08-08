@@ -4,6 +4,9 @@ import Piece, {PieceColor} from "../model/object/piece/baseclass/Piece";
 import {NO_PIECE} from "../model/object/piece/NoPiece";
 import {isEqual} from "../utils/Utils";
 
+// TODO add check for check and checkmate after each move
+// TODO handle checkmate/end game
+// TODO add Castle move with check for check in castled king squares
 export class GameLogic {
     gameModel:GameModel = new GameModel();
 
