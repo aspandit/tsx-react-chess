@@ -1,10 +1,10 @@
 import Move from "../move/baseclass/Move";
-import BoardModel from "../../../BoardModel";
+import GameModel from "../../../GameModel";
 
 export default abstract class Piece {
     private readonly _pieceLabel: string;
-    private readonly _pieceType: number;
-    private readonly _pieceColor: number;
+    private readonly _pieceType: PieceType;
+    private readonly _pieceColor: PieceColor;
     private readonly _initialSquare: BoardLocation; // this differentiates the pieces; it is a key
 
     protected _moves: Move[];
@@ -19,11 +19,11 @@ export default abstract class Piece {
         this._moves = [];
     }
 
-    get color(): number {
+    get color(): PieceColor {
         return this._pieceColor;
     }
 
-    get type(): number {
+    get type(): PieceType {
         return this._pieceType;
     }
 
@@ -35,11 +35,11 @@ export default abstract class Piece {
         return this._pieceLabel;
     }
 
-    makeMove(boardModel: BoardModel, from: BoardLocation, to: BoardLocation): boolean {
+    makeMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
         // Any one of the moves needs to be valid
         return this._moves.reduce((acc, curr) => {
             console.info(acc);
-            return acc || curr.makeMove(boardModel, from, to)
+            return acc || curr.makeMove(gameModel, from, to)
         }, false);
     }
 }

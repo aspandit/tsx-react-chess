@@ -53,7 +53,7 @@ export default class BoardModel {
         return piece.color // TODO raise error here for color === NO_PIECE
     }
 
-    static parseCoordinate(coordinate: BoardLocation): ParsedBoardLocation {
+    static parseBoardLocation(coordinate: BoardLocation): ParsedBoardLocation {
         return {
             rowIndex: BoardModel.rowCoordinates.indexOf(coordinate.toString().charAt(1)),
             colIndex: BoardModel.colCoordinates.indexOf(coordinate.toString().charAt(0))
@@ -61,12 +61,12 @@ export default class BoardModel {
     }
 
     getBoardSquareContents(coordinate: BoardLocation): Piece {
-        const coords = BoardModel.parseCoordinate(coordinate);
+        const coords = BoardModel.parseBoardLocation(coordinate);
         return this._board[coords.rowIndex][coords.colIndex];
     }
 
     setBoardSquareContents(coordinate: BoardLocation, content: Piece): void {
-        const coords = BoardModel.parseCoordinate(coordinate);
+        const coords = BoardModel.parseBoardLocation(coordinate);
         this._board[coords.rowIndex][coords.colIndex] = content;
     }
 
@@ -76,5 +76,21 @@ export default class BoardModel {
             board.push([...row]);
         }
         return board; // return copy so changes can't be made by client code
+    }
+
+    static leftSquare(board: Piece[][], coord: BoardLocation):BoardLocation | null {
+        const coords = BoardModel.parseBoardLocation(coord);
+        if(coords.colIndex > 0) {
+            return (BoardModel.colCoordinates[coords.colIndex-1] + BoardModel.rowCoordinates[coords.rowIndex]) as BoardLocation;
+        }
+        return null;
+    }
+
+    static rightSquare(board: Piece[][], coord: BoardLocation):BoardLocation | null{
+        const coords = BoardModel.parseBoardLocation(coord);
+        if(coords.colIndex < board[coords.rowIndex].length - 1) {
+            return (BoardModel.colCoordinates[coords.colIndex+1] + BoardModel.rowCoordinates[coords.rowIndex]) as BoardLocation;
+        }
+        return null;
     }
 }

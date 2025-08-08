@@ -4,15 +4,15 @@ import GameModel from "../../../src/chess/model/GameModel";
 describe("GameModel", () => {
     test("Toggle through turns test", () => {
         let gameModel = new GameModel();
-        expect(gameModel.turn).toBe("WHITE");
+        expect(gameModel.player).toBe("WHITE");
         gameModel.toggleTurn();
-        expect(gameModel.turn).toBe("BLACK");
+        expect(gameModel.player).toBe("BLACK");
         gameModel.toggleTurn();
-        expect(gameModel.turn).toBe("WHITE");
+        expect(gameModel.player).toBe("WHITE");
     });
 
     test("Initial turn test", () => {
         let gameModel = new GameModel();
-        expect(gameModel.turn).toBe("WHITE");
+        expect(gameModel.player).toBe("WHITE");
     });
 });

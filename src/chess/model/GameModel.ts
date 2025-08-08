@@ -1,32 +1,53 @@
 import BoardModel from "./BoardModel";
-import Piece from "./object/piece/baseclass/Piece";
+import Piece, {PieceColor, PieceType} from "./object/piece/baseclass/Piece";
+import Pawn from "./object/piece/Pawn";
 
 export default class GameModel {
-    private _boardModel:BoardModel = new BoardModel();
-    private _turn: Turn = "WHITE";
+    private readonly _boardModel: BoardModel;
+    private _player: Player;
+    private _enPassantPawns: { "WHITE": Pawn[], "BLACK": Pawn[] }; // manages the pawns with en passant capabilities
 
+    constructor() {
+        this._boardModel = new BoardModel();
+        this._player = "WHITE";
+        this._enPassantPawns = {
+            "WHITE": [],
+            "BLACK": []
+        };
+    }
+
+    /**
+     * Called after turn is complete.
+     */
     toggleTurn() {
-        if(this.turn.toString() === "WHITE") {
-            this.turn = "BLACK";
+        if (this.player.toString() === "WHITE") {
+            this.player = "BLACK";
+            // remove en passant for white pawns in array and clear array
+            for(let pawn of this._enPassantPawns["WHITE"]) {
+                pawn.clearEnPassant();
+            }
+        } else {
+            this.player = "WHITE";
+            // remove en passant for black pawns in array and clear array
+            for(let pawn of this._enPassantPawns["BLACK"]) {
+                pawn.clearEnPassant();
+            }
         }
-        else {
-            this.turn = "WHITE";
-        }
     }
 
-    get turn() {
-        return this._turn;
+    get player() {
+        return this._player;
     }
 
-    set turn(turn: Turn) {
-        this._turn = turn;
+    set player(player: Player) {
+        this._player = player;
     }
 
-    get board():Piece[][] {
+    get board(): Piece[][] {
         return this._boardModel.board;
     }
 
-    get boardModel():BoardModel {
+    get boardModel(): BoardModel {
         return this._boardModel;
     }
 
@@ -36,5 +57,17 @@ export default class GameModel {
 
     setBoardSquareContents(coord: BoardLocation, piece: Piece) {
         this._boardModel.setBoardSquareContents(coord, piece);
+    }
+
+    assignToEnPassant(piece: Piece) {
+        // Route to correct array
+        if(piece.type === PieceType.PAWN) {
+            if(piece.color === PieceColor.WHITE) {
+                this._enPassantPawns["WHITE"].push(piece as Pawn);
+            }
+            else {
+                this._enPassantPawns["BLACK"].push(piece as Pawn);
+            }
+        }
     }
 }

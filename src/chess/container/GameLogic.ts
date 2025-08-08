@@ -15,18 +15,18 @@ export class GameLogic {
         return [...BoardModel.rowCoordinates];
     }
 
-    static isOwnPiece(turn:Turn,piece:Piece):boolean {
-        return turn === PieceColor[piece.color];
+    static isOwnPiece(player:Player, piece:Piece):boolean {
+        return player === PieceColor[piece.color];
     }
 
     isSquareOccupiedByOwnPiece(coord:BoardLocation):boolean {
         const piece:Piece = this.gameModel.getBoardSquareContents(coord);
-        return piece !== NO_PIECE && GameLogic.isOwnPiece(this.gameModel.turn, piece);
+        return piece !== NO_PIECE && GameLogic.isOwnPiece(this.gameModel.player, piece);
     }
 
     isSquareOccupiedByOpposingPiece(coord:BoardLocation):boolean {
         const piece:Piece = this.gameModel.getBoardSquareContents(coord);
-        return piece !== NO_PIECE && !GameLogic.isOwnPiece(this.gameModel.turn, piece);
+        return piece !== NO_PIECE && !GameLogic.isOwnPiece(this.gameModel.player, piece);
     }
 
     isSquareEmpty(coord:BoardLocation): boolean {
@@ -36,7 +36,7 @@ export class GameLogic {
     movePiece(from:BoardLocation, to:BoardLocation):boolean {
         const piece:Piece = this.gameModel.getBoardSquareContents(from);
         // TODO Add logic in if condition that checks gameModel for conditions for castling, en passant, and two moves ahead for pawn
-        if(!isEqual(piece,NO_PIECE) && piece.makeMove(this.gameModel.boardModel,from,to)) {
+        if(!isEqual(piece,NO_PIECE) && piece.makeMove(this.gameModel,from,to)) {
             this.toggleTurn();
             return true; // TODO make piece object for presentation/container; return captured piece or no piece to UI
         }

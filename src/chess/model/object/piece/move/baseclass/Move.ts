@@ -3,9 +3,10 @@ import BoardModel from "../../../../BoardModel";
 import {NO_PIECE} from "../../NoPiece";
 import {Direction} from "../../../Direction";
 import {isEqual} from "../../../../../utils/Utils";
+import GameModel from "../../../../GameModel";
 
 export default abstract class Move {
-    protected _captureOptional: boolean;
+    protected _captureOptional: boolean; // TODO change this to _captureRequired...the language is confusing here
     protected _captureProhibited: boolean;
     protected _clearPathOptional: boolean;
     protected _direction: Direction;
@@ -19,14 +20,14 @@ export default abstract class Move {
 
     /**
      * Makes the current move and returns true if valid.
-     * @param boardModel the current board model; the model is needed here because a copy of the board is returned from boardModel.board for safety/encapsulation
+     * @param gameModel the current game model; the model is needed here because a copy of the board is returned from boardModel.board for safety/encapsulation
      * @param from the starting coordinate for the move
      * @param to the ending coordinate for the move
      */
-    makeMove(boardModel: BoardModel, from: BoardLocation, to: BoardLocation): boolean {
-        const board: Piece[][] = boardModel.board;
-        const fromLoc: ParsedBoardLocation = BoardModel.parseCoordinate(from);
-        const toLoc: ParsedBoardLocation = BoardModel.parseCoordinate(to);
+    makeMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
+        const board: Piece[][] = gameModel.board;
+        const fromLoc: ParsedBoardLocation = BoardModel.parseBoardLocation(from);
+        const toLoc: ParsedBoardLocation = BoardModel.parseBoardLocation(to);
 
         const toSquareContents: Piece = board[toLoc.rowIndex][toLoc.colIndex];
         const pathShapeCorrect = this.isPathShapeCorrect(fromLoc, toLoc);
@@ -36,8 +37,7 @@ export default abstract class Move {
         if (pathShapeCorrect
             && (this._clearPathOptional || pathClear)
             && ((this._captureOptional || capturing) || (this._captureProhibited && !capturing))) {
-            this.doMove(boardModel, from, to);
-            return true;
+            return this.doMove(gameModel, from, to);
         } else {
             return false;
         }
@@ -72,17 +72,19 @@ export default abstract class Move {
 
     /**
      * This method is overridden by subclasses for special moves.
-     * @param boardModel
+     * @param gameModel
      * @param from
      * @param to
      * @protected
      */
-    protected doMove(boardModel: BoardModel, from: BoardLocation, to: BoardLocation) {
-        const board:Piece[][] = boardModel.board;
-        const fromObj = BoardModel.parseCoordinate(from);
+    protected doMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation):boolean {
+        const board:Piece[][] = gameModel.board;
+        const fromObj = BoardModel.parseBoardLocation(from);
 
         // make the move - order is important HERE
-        boardModel.setBoardSquareContents(to, board[fromObj.rowIndex][fromObj.colIndex]);
-        boardModel.setBoardSquareContents(from, NO_PIECE);
+        gameModel.setBoardSquareContents(to, board[fromObj.rowIndex][fromObj.colIndex]);
+        gameModel.setBoardSquareContents(from, NO_PIECE);
+
+        return true;
     }
 }
