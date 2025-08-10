@@ -2,17 +2,66 @@ import './BoardUI.css'
 import {useEffect, useState} from "react";
 import {GameLogic} from "../container/GameLogic";
 import React from 'react';
+import CryptoJS from "crypto-js";
+import Sha256 from "crypto-js/sha256";
 
 export default function Game() {
+    const importGameModel = (event:any) => {
+        event.preventDefault();
+        const reader = new FileReader();
+        reader.readAsText(event.target.files[0]);
+        reader.onloadend = () => {
+            const clicks:BoardLocation[] = JSON.parse(reader.result as string);
+            const gl:GameLogic = new GameLogic();
+            for(let click of clicks) {
+                gl.selectSquare(click);
+            }
+            setGameLogic(gl);
+        }
+    };
+
+    const exportGameModel = () => {
+        const content:string = JSON.stringify(clicks);
+        const blob = new Blob([content], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        const filename:string = Sha256(content).toString(CryptoJS.enc.Hex);
+        a.download = filename + '.json';
+
+        // Append to body and click to trigger download, then remove
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        // Clean up the object URL
+        URL.revokeObjectURL(url);
+    };
+
     const [gameLogic,setGameLogic] = useState<GameLogic>(new GameLogic()); // TODO ***determine whether this and other classes need to be function-based***
     const [selection, setSelection] = useState<BoardLocation>("");
+    const [clicks, setClicks] = useState<BoardLocation[]>([]);
 
     const handleSquareClick = (coords:BoardLocation) => {
+        clicks.push(coords);
+        setClicks(clicks);
+
         setSelection(gameLogic.selectSquare(coords));
     };
 
     return (
-      <BoardUI className={"board"} selection={selection} board={gameLogic.boardStringView} onSquareClick={handleSquareClick} />
+        <>
+            <div>
+                <input type={"file"} onChange={importGameModel} /> {/* TODO style this element to match other button */}
+                <button onClick={exportGameModel}>Export...</button>
+            </div>
+            <div>
+                <span>
+                    <BoardUI className={"board"} selection={selection} board={gameLogic.boardStringView} onSquareClick={handleSquareClick} />
+                </span>
+            </div>
+        </>
     );
 }
 
