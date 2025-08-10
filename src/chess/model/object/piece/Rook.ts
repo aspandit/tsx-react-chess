@@ -5,6 +5,6 @@ import Straight from "./move/Straight";
 export default class Rook extends Piece {
     constructor(color: PieceColor, initialSquare: BoardLocation) {
         super(PieceType.ROOK, color, initialSquare);
-        this._moves.push(new Straight(true, false, false, Direction.EITHER));
+        this._moves.push(new Straight(false, false, false, Direction.EITHER));
     }
 }

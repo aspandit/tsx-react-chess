@@ -14,13 +14,13 @@ export default class Pawn extends Piece {
 
     constructor(color: PieceColor, initialSquare: BoardLocation) {
         super(PieceType.PAWN, color, initialSquare);
-        this._moves.push(new OneForward(true, true, false,
+        this._moves.push(new OneForward(false, true, false,
                 color == PieceColor.WHITE ? Direction.INCREASING : Direction.DECREASING),
-            new OneDiagonalForward(false, false, true,
+            new OneDiagonalForward(true, false, true,
                 color == PieceColor.WHITE ? Direction.INCREASING : Direction.DECREASING)
         );
 
-        this._twoForward = new TwoForward(true, true, false,
+        this._twoForward = new TwoForward(false, true, false,
             color == PieceColor.WHITE ? Direction.INCREASING : Direction.DECREASING);
         this._enPassant = null;
     }
@@ -64,8 +64,8 @@ export default class Pawn extends Piece {
         const locCoords: ParsedBoardLocation = BoardModel.parseBoardLocation(loc);
         const piece: Piece = gameModel.board[locCoords.rowIndex][locCoords.colIndex];
         if (piece.type === PieceType.PAWN) {
-            (piece as Pawn)._enPassant = new EnPassant(true/* TODO make this to false; right now it is being enforced by specialized logic */,
-                false, true, piece.color == PieceColor.WHITE ? Direction.INCREASING : Direction.DECREASING, grantorLocation);
+            (piece as Pawn)._enPassant = new EnPassant(true, false, true,
+                piece.color == PieceColor.WHITE ? Direction.INCREASING : Direction.DECREASING, grantorLocation);
             gameModel.assignToEnPassant(piece);
         }
     }

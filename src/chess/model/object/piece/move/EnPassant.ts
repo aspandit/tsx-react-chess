@@ -8,8 +8,8 @@ import {Direction} from "../../Direction";
 export default class EnPassant extends Move {
     _grantorLocation:BoardLocation; // location of the Pawn that granted the EnPassant ability
 
-    constructor(captureOptional: boolean, captureProhibited: boolean, clearPathOptional: boolean, direction: Direction, grantorLocation:BoardLocation) {
-        super(captureOptional, captureProhibited, clearPathOptional, direction);
+    constructor(captureRequired: boolean, captureProhibited: boolean, clearPathOptional: boolean, direction: Direction, grantorLocation:BoardLocation) {
+        super(captureRequired, captureProhibited, clearPathOptional, direction);
         this._grantorLocation = grantorLocation;
     }
 
@@ -37,5 +37,9 @@ export default class EnPassant extends Move {
         gameModel.setBoardSquareContents(from, NO_PIECE);
         gameModel.setBoardSquareContents(targetLocation, NO_PIECE);
         return true;
+    }
+
+    protected getCaptureSquareContents(board: Piece[][], fromLoc: ParsedBoardLocation, toLoc: ParsedBoardLocation): Piece {
+        return board[fromLoc.rowIndex][toLoc.colIndex];
     }
 }

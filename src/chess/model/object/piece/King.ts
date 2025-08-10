@@ -5,6 +5,6 @@ import {Direction} from "../Direction";
 export default class King extends Piece {
     constructor(color: PieceColor, initialSquare: BoardLocation) {
         super(PieceType.KING, color, initialSquare);
-        this._moves.push(new OneAdjacent(true, false, false, Direction.EITHER));
+        this._moves.push(new OneAdjacent(false, false, false, Direction.EITHER));
     }
 }

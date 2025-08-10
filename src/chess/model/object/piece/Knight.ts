@@ -5,6 +5,6 @@ import {Direction} from "../Direction";
 export default class Knight extends Piece {
     constructor(color: PieceColor, initialSquare: BoardLocation) {
         super(PieceType.KNIGHT, color, initialSquare);
-        this._moves.push(new LShape(true, false, true, Direction.EITHER));
+        this._moves.push(new LShape(false, false, true, Direction.EITHER));
     }
 }

@@ -5,6 +5,6 @@ import {Direction} from "../Direction";
 export default class Bishop extends Piece {
     constructor(color:PieceColor, initialSquare: BoardLocation) {
         super(PieceType.BISHOP,color,initialSquare);
-        this._moves.push(new Diagonal(true, false, false, Direction.EITHER));
+        this._moves.push(new Diagonal(false, false, false, Direction.EITHER));
     }
 }

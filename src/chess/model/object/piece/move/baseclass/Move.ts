@@ -6,13 +6,13 @@ import {isEqual} from "../../../../../utils/Utils";
 import GameModel from "../../../../GameModel";
 
 export default abstract class Move {
-    protected _captureOptional: boolean; // TODO change this to _captureRequired...the language is confusing here
+    protected _captureRequired: boolean;
     protected _captureProhibited: boolean;
     protected _clearPathOptional: boolean;
     protected _direction: Direction;
 
-    constructor(captureOptional: boolean, captureProhibited: boolean, clearPathOptional: boolean, direction: Direction) {
-        this._captureOptional = captureOptional;
+    constructor(captureRequired: boolean, captureProhibited: boolean, clearPathOptional: boolean, direction: Direction) {
+        this._captureRequired = captureRequired;
         this._captureProhibited = captureProhibited;
         this._clearPathOptional = clearPathOptional;
         this._direction = direction;
@@ -29,14 +29,14 @@ export default abstract class Move {
         const fromLoc: ParsedBoardLocation = BoardModel.parseBoardLocation(from);
         const toLoc: ParsedBoardLocation = BoardModel.parseBoardLocation(to);
 
-        const toSquareContents: Piece = board[toLoc.rowIndex][toLoc.colIndex];
+        const captureSquareContents: Piece = this.getCaptureSquareContents(board, fromLoc, toLoc);
         const pathShapeCorrect = this.isPathShapeCorrect(fromLoc, toLoc);
         const pathClear = this.isPathClear(this.getPath(board, fromLoc, toLoc));
-        const capturing = this.isCapturing(toSquareContents);
+        const capturing = this.isCapturing(captureSquareContents);
         console.info(`pathShapeCorrect: ${pathShapeCorrect}, pathClear: ${pathClear}, capturing: ${capturing}`);
         if (pathShapeCorrect
             && (this._clearPathOptional || pathClear)
-            && ((this._captureOptional || capturing) || (this._captureProhibited && !capturing))) {
+            && ((!this._captureRequired || capturing) && (!this._captureProhibited || !capturing))) {
             return this.doMove(gameModel, from, to);
         } else {
             return false;
@@ -66,8 +66,8 @@ export default abstract class Move {
         return path.reduce((accum, val) => accum && isEqual(val, NO_PIECE), true);
     }
 
-    private isCapturing(toSquareContents: Piece): boolean {
-        return !isEqual(toSquareContents, NO_PIECE);
+    private isCapturing(captureSquareContents: Piece): boolean {
+        return !isEqual(captureSquareContents, NO_PIECE);
     }
 
     /**
@@ -77,8 +77,8 @@ export default abstract class Move {
      * @param to
      * @protected
      */
-    protected doMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation):boolean {
-        const board:Piece[][] = gameModel.board;
+    protected doMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
+        const board: Piece[][] = gameModel.board;
         const fromObj = BoardModel.parseBoardLocation(from);
 
         // make the move - order is important HERE
@@ -86,5 +86,9 @@ export default abstract class Move {
         gameModel.setBoardSquareContents(from, NO_PIECE);
 
         return true;
+    }
+
+    protected getCaptureSquareContents(board: Piece[][], fromLoc: ParsedBoardLocation, toLoc: ParsedBoardLocation): Piece {
+        return board[toLoc.rowIndex][toLoc.colIndex];
     }
 }
