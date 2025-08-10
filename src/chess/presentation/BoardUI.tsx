@@ -7,25 +7,8 @@ export default function Game() {
     const [gameLogic,setGameLogic] = useState<GameLogic>(new GameLogic()); // TODO ***determine whether this and other classes need to be function-based***
     const [selection, setSelection] = useState<BoardLocation>("");
 
-    const handleSquareClick = (coord:BoardLocation) => {
-        if(selection === ""){ // no square was previously selected
-            if(gameLogic.isSquareOccupiedByOwnPiece(coord)) { // initially selected square must have the player's own piece on it
-                setSelection(coord);
-            }
-        }
-        else if(selection === coord) { // the previously selected square was clicked again
-            setSelection("");
-        }
-        else {
-            if(gameLogic.isSquareOccupiedByOwnPiece(coord)) { // set selection to another square with own piece if it was clicked
-                setSelection(coord);
-            }
-            else { // don't try to move piece unless destination square is empty or has opposing piece
-                if (gameLogic.movePiece(selection, coord)) {
-                    setSelection("");
-                }
-            }
-        }
+    const handleSquareClick = (coords:BoardLocation) => {
+        setSelection(gameLogic.selectSquare(coords));
     };
 
     return (
