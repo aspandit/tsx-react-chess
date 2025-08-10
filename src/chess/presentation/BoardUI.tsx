@@ -1,11 +1,7 @@
 import './BoardUI.css'
-import {createContext, useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {GameLogic} from "../container/GameLogic";
 import React from 'react';
-
-const SelectionContext = createContext<BoardLocation>("");
-
-const useGetSelection = () => useContext(SelectionContext);
 
 export default function Game() {
     const [gameLogic,setGameLogic] = useState<GameLogic>(new GameLogic()); // TODO ***determine whether this and other classes need to be function-based***
@@ -38,9 +34,22 @@ export default function Game() {
 }
 
 function BoardUI(props: {className: string, selection:BoardLocation, board:string[][], onSquareClick:(coord:BoardLocation) => void}) {
-    return (
-        <SelectionContext.Provider value={props.selection}>
-            {/*Generate board top-left to lower-right*/}
+    const selection:BoardLocation = props.selection;
+
+    useEffect(() => {
+        // Clear previous selection(s)
+        const currSelections = document.getElementsByClassName("square-inner-selected");
+        Array.from(currSelections).forEach((sel: Element) => {
+            sel.classList.remove("square-inner-selected");
+        });
+
+        // Highlight inner square if new selection was made
+        if (selection !== "") {
+            document.getElementById(selection as string)?.getElementsByClassName("square-inner")[0].classList.add("square-inner-selected");
+        }
+    }, [selection]);
+
+    return (<>{/*Generate board top-left to lower-right*/}
             <div className={"board"}>
                 {/*Generate rows*/}
                 {
@@ -58,7 +67,7 @@ function BoardUI(props: {className: string, selection:BoardLocation, board:strin
                                                                                      coordinate={coord}/>)
                 }
             </div>
-        </SelectionContext.Provider>
+        </>
     );
 }
 
@@ -99,25 +108,9 @@ function Square(props: { key: string, className: string, coordinate: string, con
 }
 
 function SquareInner(props: { content: string, coordinate: string, onSquareClick: (coord:BoardLocation) => void }) {
-    const selection = useGetSelection();
-
     function squareClick(coordinate: string) {
         props.onSquareClick(coordinate as BoardLocation);
     }
-
-    useEffect(() => {
-        // TODO figure out why this is called so many times(and how many times) when a new selection is made. Maybe because selection is at the Game component level? If so, consider using useRef in Game component?
-        // Clear previous selection(s)
-        const currSelections = document.getElementsByClassName("square-inner-selected");
-        Array.from(currSelections).forEach((sel: Element) => {
-            sel.classList.remove("square-inner-selected");
-        });
-
-        // Highlight inner square if new selection was made
-        if (selection !== "") {
-            document.getElementById(selection as string)?.getElementsByClassName("square-inner")[0].classList.add("square-inner-selected");
-        }
-    }, [selection]);
 
     return (
         <span className={"square-inner"} onClick={() => squareClick(props.coordinate)}>
