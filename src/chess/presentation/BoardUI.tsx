@@ -11,7 +11,7 @@ export default function Game() {
         const reader = new FileReader();
         reader.readAsText(event.target.files[0]);
         reader.onloadend = () => {
-            const clicks:BoardLocation[] = JSON.parse(reader.result as string);
+            const clicks:BoardLocation[] = JSON.parse(reader.result as string).clicks;
             const gl:GameLogic = new GameLogic();
             for(let click of clicks) {
                 gl.selectSquare(click);
@@ -21,7 +21,8 @@ export default function Game() {
     };
 
     const exportGameModel = () => {
-        const content:string = JSON.stringify(clicks);
+        const boards:string[][][] = generateExportData();
+        const content:string = JSON.stringify({clicks: clicks, boards: boards});
         const blob = new Blob([content], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
 
@@ -38,6 +39,16 @@ export default function Game() {
         // Clean up the object URL
         URL.revokeObjectURL(url);
     };
+
+    const generateExportData = () => {
+        const boards: string[][][] = [];
+        let gl: GameLogic = new GameLogic();
+        for (let aClick of clicks) {
+            gl.selectSquare(aClick);
+            boards.push(gl.boardStringView);
+        }
+        return boards;
+    }
 
     const [gameLogic,setGameLogic] = useState<GameLogic>(new GameLogic()); // TODO ***determine whether this and other classes need to be function-based***
     const [selection, setSelection] = useState<BoardLocation>("");

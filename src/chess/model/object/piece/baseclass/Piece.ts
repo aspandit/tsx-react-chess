@@ -5,7 +5,7 @@ export default abstract class Piece {
     private readonly _pieceLabel: string;
     private readonly _pieceType: PieceType;
     private readonly _pieceColor: PieceColor;
-    private readonly _initialSquare: BoardLocation; // this differentiates the pieces; it is a key
+    private readonly _initialSquare: BoardLocation; // this differentiates the pieces; it is a key - TODO not currently in use; revive if needed
 
     protected _moves: Move[];
 
@@ -29,6 +29,10 @@ export default abstract class Piece {
 
     get label(): string {
         return this._pieceLabel;
+    }
+
+    get initialSquare(): BoardLocation {
+        return this._initialSquare;
     }
 
     toString(): string {
