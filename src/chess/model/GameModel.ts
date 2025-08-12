@@ -43,19 +43,19 @@ export default class GameModel {
         this._player = player;
     }
 
-    get board(): Piece[][] {
-        return this._boardModel.board;
-    }
-
-    get boardModel(): BoardModel {
-        return this._boardModel;
+    get boardCopy() {
+        return this._boardModel.boardCopy;
     }
 
     getBoardSquareContents(coord: BoardLocation) {
         return this._boardModel.getBoardSquareContents(coord);
     }
 
-    setBoardSquareContents(coord: BoardLocation, piece: Piece) {
+    getBoardSquareContentsFromCoords(row: number,col: number) {
+        return this._boardModel.getBoardSquareContents(BoardModel.colCoordinates[col] + BoardModel.rowCoordinates[row] as BoardLocation);
+    }
+
+    async setBoardSquareContents(coord: BoardLocation, piece: Piece) {
         this._boardModel.setBoardSquareContents(coord, piece);
     }
 

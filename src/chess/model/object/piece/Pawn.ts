@@ -50,19 +50,18 @@ export default class Pawn extends Piece {
     }
 
     private assignSidePiecesToEnPassant(gameModel: GameModel, to: BoardLocation): void {
-        const leftSquare = BoardModel.leftSquare(gameModel.board, to);
+        const leftSquare = BoardModel.leftSquare(to);
         if (leftSquare) {
             this.assignNeighborToEnPassant(gameModel, leftSquare, to);
         }
-        const rightSquare = BoardModel.rightSquare(gameModel.board, to);
+        const rightSquare = BoardModel.rightSquare(to);
         if (rightSquare) {
             this.assignNeighborToEnPassant(gameModel, rightSquare, to);
         }
     }
 
     private assignNeighborToEnPassant(gameModel: GameModel, loc: BoardLocation, grantorLocation: BoardLocation) {
-        const locCoords: ParsedBoardLocation = BoardModel.parseBoardLocation(loc);
-        const piece: Piece = gameModel.board[locCoords.rowIndex][locCoords.colIndex];
+        const piece: Piece = gameModel.getBoardSquareContents(loc);
         if (piece.type === PieceType.PAWN) {
             (piece as Pawn)._enPassant = new EnPassant(true, false, true,
                 piece.color == PieceColor.WHITE ? Direction.INCREASING : Direction.DECREASING, grantorLocation);

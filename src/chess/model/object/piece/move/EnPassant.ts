@@ -18,12 +18,11 @@ export default class EnPassant extends Move {
             && (to.rowIndex - from.rowIndex == this._direction && Math.abs(to.colIndex - from.colIndex) == 1);
     }
 
-    getPath(board: Piece[][], from: ParsedBoardLocation, to: ParsedBoardLocation): Piece[] {
+    getPath(gameModel:GameModel, from: ParsedBoardLocation, to: ParsedBoardLocation): Piece[] {
         return [];
     }
 
-    protected doMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation):boolean {
-        const board:Piece[][] = gameModel.board;
+    protected doMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
         const fromObj = BoardModel.parseBoardLocation(from);
         const toObj = BoardModel.parseBoardLocation(to);
         const targetLocation: BoardLocation = (BoardModel.colCoordinates[toObj.colIndex] + BoardModel.rowCoordinates[fromObj.rowIndex]) as BoardLocation;
@@ -33,13 +32,13 @@ export default class EnPassant extends Move {
         }
 
         // make the move - order is important HERE
-        gameModel.setBoardSquareContents(to, board[fromObj.rowIndex][fromObj.colIndex]);
+        gameModel.setBoardSquareContents(to, gameModel.getBoardSquareContents(from));
         gameModel.setBoardSquareContents(from, NO_PIECE);
         gameModel.setBoardSquareContents(targetLocation, NO_PIECE);
         return true;
     }
 
-    protected getCaptureSquareContents(board: Piece[][], fromLoc: ParsedBoardLocation, toLoc: ParsedBoardLocation): Piece {
-        return board[fromLoc.rowIndex][toLoc.colIndex];
+    protected getCaptureSquareContents(gameModel:GameModel, fromLoc: ParsedBoardLocation, toLoc: ParsedBoardLocation): Piece {
+        return gameModel.getBoardSquareContentsFromCoords(fromLoc.rowIndex,toLoc.colIndex);
     }
 }

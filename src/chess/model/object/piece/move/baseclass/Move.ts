@@ -25,13 +25,12 @@ export default abstract class Move {
      * @param to the ending coordinate for the move
      */
     makeMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
-        const board: Piece[][] = gameModel.board;
         const fromLoc: ParsedBoardLocation = BoardModel.parseBoardLocation(from);
         const toLoc: ParsedBoardLocation = BoardModel.parseBoardLocation(to);
 
-        const captureSquareContents: Piece = this.getCaptureSquareContents(board, fromLoc, toLoc);
+        const captureSquareContents: Piece = this.getCaptureSquareContents(gameModel, fromLoc, toLoc);
         const pathShapeCorrect = this.isPathShapeCorrect(fromLoc, toLoc);
-        const pathClear = this.isPathClear(this.getPath(board, fromLoc, toLoc));
+        const pathClear = this.isPathClear(this.getPath(gameModel, fromLoc, toLoc));
         const capturing = this.isCapturing(captureSquareContents);
         console.info(`pathShapeCorrect: ${pathShapeCorrect}, pathClear: ${pathClear}, capturing: ${capturing}`);
         if (pathShapeCorrect
@@ -56,11 +55,11 @@ export default abstract class Move {
     /**
      * Returns ANY ONE path's pieces from {@link from} to {@link to}.
      * Path should NOT include start and end squares.
-     * @param board
+     * @param gameModel
      * @param from
      * @param to
      */
-    abstract getPath(board: Piece[][], from: ParsedBoardLocation, to: ParsedBoardLocation): Piece[];
+    abstract getPath(gameModel: GameModel, from: ParsedBoardLocation, to: ParsedBoardLocation): Piece[];
 
     private isPathClear(path: Piece[]): boolean {
         return path.reduce((accum, val) => accum && isEqual(val, NO_PIECE), true);
@@ -78,17 +77,14 @@ export default abstract class Move {
      * @protected
      */
     protected doMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
-        const board: Piece[][] = gameModel.board;
-        const fromObj = BoardModel.parseBoardLocation(from);
-
         // make the move - order is important HERE
-        gameModel.setBoardSquareContents(to, board[fromObj.rowIndex][fromObj.colIndex]);
+        gameModel.setBoardSquareContents(to, gameModel.getBoardSquareContents(from));
         gameModel.setBoardSquareContents(from, NO_PIECE);
 
         return true;
     }
 
-    protected getCaptureSquareContents(board: Piece[][], fromLoc: ParsedBoardLocation, toLoc: ParsedBoardLocation): Piece {
-        return board[toLoc.rowIndex][toLoc.colIndex];
+    protected getCaptureSquareContents(gameModel:GameModel, fromLoc: ParsedBoardLocation, toLoc: ParsedBoardLocation): Piece {
+        return gameModel.getBoardSquareContents((BoardModel.colCoordinates[toLoc.colIndex] + BoardModel.rowCoordinates[toLoc.rowIndex]) as BoardLocation);
     }
 }

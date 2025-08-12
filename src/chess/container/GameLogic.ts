@@ -26,7 +26,7 @@ export class GameLogic {
     get boardStringView():string[][] {
         const bsv:string[][] = [];
 
-        for(const row of this._gameModel.board) {
+        for(const row of this._gameModel.boardCopy) {
             const arr:string[] = [];
             for(const sq of row) {
                 arr.push(sq.label)

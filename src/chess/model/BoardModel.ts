@@ -8,7 +8,7 @@ import Pawn from "./object/piece/Pawn";
 import NoPiece from "./object/piece/NoPiece";
 
 export default class BoardModel {
-    private readonly _board: Piece[][];
+    private readonly _boardCopy: Piece[][];
 
     static rowCoordinates: string[] = "87654321".split("");
     static colCoordinates: string[] = "abcdefgh".split("");
@@ -43,14 +43,10 @@ export default class BoardModel {
     ];
 
     constructor(initBoard: Piece[][] = BoardModel.initBoard) {
-        this._board = [];
+        this._boardCopy = [];
         for (let row of initBoard) {
-            this._board.push([...row]);
+            this._boardCopy.push([...row]);
         }
-    }
-
-    static getPieceColor(piece: Piece): PieceColor {
-        return piece.color // TODO raise error here for color === NO_PIECE
     }
 
     static parseBoardLocation(coordinate: BoardLocation): ParsedBoardLocation {
@@ -62,23 +58,23 @@ export default class BoardModel {
 
     getBoardSquareContents(coordinate: BoardLocation): Piece {
         const coords = BoardModel.parseBoardLocation(coordinate);
-        return this._board[coords.rowIndex][coords.colIndex];
+        return this._boardCopy[coords.rowIndex][coords.colIndex];
     }
 
     setBoardSquareContents(coordinate: BoardLocation, content: Piece): void {
         const coords = BoardModel.parseBoardLocation(coordinate);
-        this._board[coords.rowIndex][coords.colIndex] = content;
+        this._boardCopy[coords.rowIndex][coords.colIndex] = content;
     }
 
-    get board(): Piece[][] {
+    get boardCopy(): Piece[][] {
         let board: Piece[][] = [];
-        for (let row of this._board) {
+        for (let row of this._boardCopy) {
             board.push([...row]);
         }
         return board; // return copy so changes can't be made by client code
     }
 
-    static leftSquare(board: Piece[][], coord: BoardLocation):BoardLocation | null {
+    static leftSquare(coord: BoardLocation):BoardLocation | null {
         const coords = BoardModel.parseBoardLocation(coord);
         if(coords.colIndex > 0) {
             return (BoardModel.colCoordinates[coords.colIndex-1] + BoardModel.rowCoordinates[coords.rowIndex]) as BoardLocation;
@@ -86,9 +82,9 @@ export default class BoardModel {
         return null;
     }
 
-    static rightSquare(board: Piece[][], coord: BoardLocation):BoardLocation | null{
+    static rightSquare(coord: BoardLocation):BoardLocation | null{
         const coords = BoardModel.parseBoardLocation(coord);
-        if(coords.colIndex < board[coords.rowIndex].length - 1) {
+        if(coords.colIndex < BoardModel.colCoordinates.length - 1) {
             return (BoardModel.colCoordinates[coords.colIndex+1] + BoardModel.rowCoordinates[coords.rowIndex]) as BoardLocation;
         }
         return null;
