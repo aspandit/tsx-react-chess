@@ -5,6 +5,18 @@
     --piece-size: 2em;
 }
 
+.main {
+    display: inline-flex;
+}
+
+.main table {
+    border: #1a1a1a solid 0.1em;
+}
+
+.main td {
+    padding: 0.5em;
+}
+
 .board {
     display: table-cell;
 }

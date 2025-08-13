@@ -63,14 +63,30 @@ export default function Game() {
 
     return (
         <>
-            <div>
-                <input type={"file"} onChange={importGameModel} /> {/* TODO style this element to match other button */}
-                <button onClick={exportGameModel}>Export...</button>
-            </div>
-            <div>
-                <span>
-                    <BoardUI className={"board"} selection={selection} board={gameLogic.boardStringView} onSquareClick={handleSquareClick} />
-                </span>
+            <div className={"main"}>
+            <span>
+                <BoardUI className={"board"} selection={selection} board={gameLogic.boardStringView} onSquareClick={handleSquareClick} />
+            </span>
+            <span>
+            <table>
+                <thead>
+                        <tr><td>Controls</td></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input id={"btnImportInput"} type={"file"} onChange={importGameModel} hidden={true} />
+                            <label htmlFor={"btnImportInput"}>
+                                Import board...
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><button id={"btnExport"} onClick={exportGameModel}>Export board...</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            </span>
             </div>
         </>
     );
