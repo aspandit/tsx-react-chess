@@ -9,6 +9,7 @@ import NoPiece, {NO_PIECE} from "./object/piece/NoPiece";
 
 export default class BoardModel {
     private readonly _board: Piece[][];
+    private _kingLocations: {"WHITE": BoardLocation, "BLACK": BoardLocation};
 
     static rowCoordinates: string[] = "87654321".split("");
     static colCoordinates: string[] = "abcdefgh".split("");
@@ -51,6 +52,10 @@ export default class BoardModel {
                 aRow.push(BoardModel.generateNewPiece(piece)); // it is VERY important we recreate the pieces as we do things like add/remove moves during gameplay
             }
         }
+        this._kingLocations = {
+            "WHITE": "e1",
+            "BLACK": "e8"
+        };
     }
 
     private static generateNewPiece(piece: Piece): Piece {
@@ -111,5 +116,14 @@ export default class BoardModel {
             return (BoardModel.colCoordinates[coords.colIndex+1] + BoardModel.rowCoordinates[coords.rowIndex]) as BoardLocation;
         }
         return null;
+    }
+
+    updateKingLocation(king: King, to: BoardLocation) {
+        if(king.color == PieceColor.WHITE) {
+            this._kingLocations["WHITE"] = to;
+        }
+        else {
+            this._kingLocations["BLACK"] = to;
+        }
     }
 }

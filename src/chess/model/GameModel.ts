@@ -1,6 +1,7 @@
 import BoardModel from "./BoardModel";
 import Piece, {PieceColor, PieceType} from "./object/piece/baseclass/Piece";
 import Pawn from "./object/piece/Pawn";
+import King from "./object/piece/King";
 
 export default class GameModel {
     private readonly _boardModel: BoardModel;
@@ -69,5 +70,9 @@ export default class GameModel {
                 this._enPassantPawns["BLACK"].push(piece as Pawn);
             }
         }
+    }
+
+    updateKingLocation(king: King, to: BoardLocation) {
+        this._boardModel.updateKingLocation(king,to);
     }
 }
