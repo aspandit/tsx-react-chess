@@ -6,14 +6,15 @@ import King from "./object/piece/King";
 export default class GameModel {
     private readonly _boardModel: BoardModel;
     private _player: Player;
-    private _enPassantPawns: { "WHITE": Pawn[], "BLACK": Pawn[] }; // manages the pawns with en passant capabilities
+    private _enPassantPawns: { [key in PieceColor]: Pawn[] }; // manages the pawns with en passant capabilities
 
     constructor() {
         this._boardModel = new BoardModel();
         this._player = "WHITE";
         this._enPassantPawns = {
-            "WHITE": [],
-            "BLACK": []
+            [PieceColor.WHITE]: [],
+            [PieceColor.BLACK]: [],
+            [PieceColor.NO_COLOR]: [],
         };
     }
 
@@ -24,13 +25,13 @@ export default class GameModel {
         if (this.player.toString() === "WHITE") {
             this.player = "BLACK";
             // remove en passant for white pawns in array and clear array
-            for(let pawn of this._enPassantPawns["WHITE"]) {
+            for(let pawn of this._enPassantPawns[PieceColor.WHITE]) {
                 pawn.clearEnPassant();
             }
         } else {
             this.player = "WHITE";
             // remove en passant for black pawns in array and clear array
-            for(let pawn of this._enPassantPawns["BLACK"]) {
+            for(let pawn of this._enPassantPawns[PieceColor.BLACK]) {
                 pawn.clearEnPassant();
             }
         }
@@ -64,11 +65,12 @@ export default class GameModel {
         // Route to correct array
         if(piece.type === PieceType.PAWN) {
             if(piece.color === PieceColor.WHITE) {
-                this._enPassantPawns["WHITE"].push(piece as Pawn);
+                this._enPassantPawns[PieceColor.WHITE].push(piece as Pawn);
             }
             else {
-                this._enPassantPawns["BLACK"].push(piece as Pawn);
+                this._enPassantPawns[PieceColor.BLACK].push(piece as Pawn);
             }
+            // TODO add error checking for PieceColor.NO_COLOR
         }
     }
 
