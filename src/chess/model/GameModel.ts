@@ -56,7 +56,7 @@ export default class GameModel {
         return this._boardModel.getBoardSquareContents(BoardModel.colCoordinates[col] + BoardModel.rowCoordinates[row] as BoardLocation);
     }
 
-    async setBoardSquareContents(coord: BoardLocation, piece: Piece) {
+    setBoardSquareContents(coord: BoardLocation, piece: Piece) {
         this._boardModel.setBoardSquareContents(coord, piece);
     }
 
