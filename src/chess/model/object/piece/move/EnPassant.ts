@@ -32,9 +32,21 @@ export default class EnPassant extends Move {
         }
 
         // make the move - order is important HERE
-        gameModel.setBoardSquareContents(to, gameModel.getBoardSquareContents(from));
+        const targetPawn:Piece = gameModel.getBoardSquareContents(targetLocation);
+        const movingPawn:Piece = gameModel.getBoardSquareContents(from);
+        gameModel.setBoardSquareContents(to, movingPawn);
         gameModel.setBoardSquareContents(from, NO_PIECE);
         gameModel.setBoardSquareContents(targetLocation, NO_PIECE);
+
+        // Rollback and return false if own king is threatened after move - a player cannot put themselves in check
+        if(gameModel.isBoardLocationThreatened(gameModel.getKingLocation(), movingPawn.color)) {
+            gameModel.setBoardSquareContents(to, NO_PIECE);
+            gameModel.setBoardSquareContents(from, movingPawn);
+            gameModel.setBoardSquareContents(targetLocation, targetPawn);
+
+            return false;
+        }
+
         return true;
     }
 

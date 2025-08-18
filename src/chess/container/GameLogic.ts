@@ -62,25 +62,27 @@ export class GameLogic {
 
     private isSquareOccupiedByOwnPiece(coord:BoardLocation):boolean {
         const piece:Piece = this._gameModel.getBoardSquareContents(coord);
-        return piece !== NO_PIECE && GameLogic.isOwnPiece(this._gameModel.player, piece);
+        return !isEqual(piece, NO_PIECE) && GameLogic.isOwnPiece(this._gameModel.player, piece);
     }
 
     private isSquareOccupiedByOpposingPiece(coord:BoardLocation):boolean {
         const piece:Piece = this._gameModel.getBoardSquareContents(coord);
-        return piece !== NO_PIECE && !GameLogic.isOwnPiece(this._gameModel.player, piece);
+        return !isEqual(piece, NO_PIECE) && !GameLogic.isOwnPiece(this._gameModel.player, piece);
     }
 
     private isSquareEmpty(coord:BoardLocation): boolean {
-        return this._gameModel.getBoardSquareContents(coord) === NO_PIECE;
+        return isEqual(this._gameModel.getBoardSquareContents(coord),NO_PIECE);
     }
 
     private movePiece(from:BoardLocation, to:BoardLocation):boolean {
         const piece:Piece = this._gameModel.getBoardSquareContents(from);
         if(!isEqual(piece,NO_PIECE) && piece.makeMove(this._gameModel,from,to)) {
+            /* TODO Check for checkmate */
             this.toggleTurn();
             return true; // TODO make piece object for presentation/container; return captured piece or no piece to UI
         }
         return false; // TODO think about passing back more info for this case(no move made)
+        /* TODO Pass back result object instead of boolean: moveMade:boolean, catpturedPiece:Piece, noMoveReason:string */
     }
 
     private toggleTurn() {

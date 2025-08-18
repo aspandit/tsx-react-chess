@@ -1,4 +1,4 @@
-import Piece from "../../baseclass/Piece";
+import Piece, {PieceType} from "../../baseclass/Piece";
 import BoardModel from "../../../../BoardModel";
 import {NO_PIECE} from "../../NoPiece";
 import {Direction} from "../../../Direction";
@@ -32,7 +32,6 @@ export default abstract class Move {
         const pathShapeCorrect = this.isPathShapeCorrect(fromLoc, toLoc);
         const pathClear = this.isPathClear(this.getPath(gameModel, fromLoc, toLoc));
         const capturing = this.isCapturing(captureSquareContents);
-        console.info(`pathShapeCorrect: ${pathShapeCorrect}, pathClear: ${pathClear}, capturing: ${capturing}`);
         if (pathShapeCorrect
             && (this._clearPathOptional || pathClear)
             && ((!this._captureRequired || capturing) && (!this._captureProhibited || !capturing))) {
@@ -70,16 +69,29 @@ export default abstract class Move {
     }
 
     /**
-     * This method is overridden by subclasses for special moves.
+     * This method is overridden by subclasses for special moves. The move is done and the board is checked to see if it causes a
+     * check to be revealed for the current player. If check is revealed for current player, the move is rolled back and false is returned.
      * @param gameModel
      * @param from
      * @param to
      * @protected
      */
     protected doMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
+        const movingPiece:Piece = gameModel.getBoardSquareContents(from);
+        const toLocPiece:Piece = gameModel.getBoardSquareContents(to);
         // make the move - order is important HERE
-        gameModel.setBoardSquareContents(to, gameModel.getBoardSquareContents(from));
+        gameModel.setBoardSquareContents(to, movingPiece);
         gameModel.setBoardSquareContents(from, NO_PIECE);
+
+        // Rollback and return false if own king is threatened after move - a player cannot put themselves in check
+            // if the king is being moved make sure to see if they are moving into a checked location
+        if((movingPiece.type === PieceType.KING && gameModel.isBoardLocationThreatened(to,movingPiece.color))
+            || (movingPiece.type !== PieceType.KING && gameModel.isBoardLocationThreatened(gameModel.getKingLocation(),movingPiece.color))) {
+            gameModel.setBoardSquareContents(to, toLocPiece);
+            gameModel.setBoardSquareContents(from, movingPiece);
+
+            return false;
+        }
 
         return true;
     }

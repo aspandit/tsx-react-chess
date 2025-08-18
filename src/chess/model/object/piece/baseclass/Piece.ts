@@ -42,7 +42,6 @@ export default abstract class Piece {
     makeMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
         // Any one of the moves needs to be valid
         return this._moves.reduce((acc, curr) => {
-            console.info(acc);
             return acc || curr.makeMove(gameModel, from, to)
         }, false);
     }

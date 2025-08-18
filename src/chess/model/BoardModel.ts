@@ -9,7 +9,7 @@ import NoPiece, {NO_PIECE} from "./object/piece/NoPiece";
 
 export default class BoardModel {
     private readonly _board: Piece[][];
-    private _kingLocations: {"WHITE": BoardLocation, "BLACK": BoardLocation};
+    private readonly _kingLocations: {"WHITE": BoardLocation, "BLACK": BoardLocation};
 
     static rowCoordinates: string[] = "87654321".split("");
     static colCoordinates: string[] = "abcdefgh".split("");
@@ -99,23 +99,45 @@ export default class BoardModel {
         for (let row of this._board) {
             board.push([...row]);
         }
-        return board; // return copy so changes can't be made by client code
+        return board; // return copy so changes can't be made by client code; note we do not clone the pieces here
     }
 
-    static leftSquare(coord: BoardLocation):BoardLocation | null {
-        const coords = BoardModel.parseBoardLocation(coord);
-        if(coords.colIndex > 0) {
-            return (BoardModel.colCoordinates[coords.colIndex-1] + BoardModel.rowCoordinates[coords.rowIndex]) as BoardLocation;
-        }
-        return null;
+    static leftSquare(coord: BoardLocation):BoardLocation {
+        return BoardModel.getValidBoardLocationByOffset(coord,0,-1);
     }
 
-    static rightSquare(coord: BoardLocation):BoardLocation | null{
-        const coords = BoardModel.parseBoardLocation(coord);
-        if(coords.colIndex < BoardModel.colCoordinates.length - 1) {
-            return (BoardModel.colCoordinates[coords.colIndex+1] + BoardModel.rowCoordinates[coords.rowIndex]) as BoardLocation;
+    static rightSquare(coord: BoardLocation):BoardLocation {
+        return BoardModel.getValidBoardLocationByOffset(coord,0,1);
+    }
+
+    static getValidBoardLocationByOffset(coords:BoardLocation, rowOffset:number, colOffset:number):BoardLocation {
+        const parsed = BoardModel.parseBoardLocation(coords);
+        if(parsed.colIndex + colOffset >= 0 &&
+            parsed.colIndex + colOffset < BoardModel.colCoordinates.length &&
+            parsed.rowIndex + rowOffset >= 0 &&
+            parsed.rowIndex + rowOffset < BoardModel.rowCoordinates.length) {
+            return (BoardModel.colCoordinates[parsed.colIndex+colOffset] + BoardModel.rowCoordinates[parsed.rowIndex+rowOffset]) as BoardLocation;
         }
-        return null;
+        return "";
+    }
+
+    static getValidLShapedOffsets(loc:BoardLocation):BoardLocation[] {
+        const ret: BoardLocation[] = [];
+        let offsets:ParsedBoardLocation[] = [
+                                                {rowIndex: 1,colIndex: 2}, {rowIndex: 2,colIndex: 1},
+                                                {rowIndex: -1,colIndex: 2}, {rowIndex: 2,colIndex: -1},
+                                                {rowIndex: 1,colIndex: -2}, {rowIndex: -2,colIndex: 1},
+                                                {rowIndex: -1,colIndex: -2}, {rowIndex: -2,colIndex: -1}
+                                            ];
+
+        for(let offset of offsets) {
+            const coords:BoardLocation = BoardModel.getValidBoardLocationByOffset(loc, offset.rowIndex, offset.colIndex);
+            if(coords != "") {
+                ret.push(coords);
+            }
+        }
+
+        return ret;
     }
 
     updateKingLocation(king: King, to: BoardLocation) {
@@ -125,5 +147,9 @@ export default class BoardModel {
         else {
             this._kingLocations["BLACK"] = to;
         }
+    }
+
+    getKingLocation(player:Player):BoardLocation {
+        return this._kingLocations[player];
     }
 }

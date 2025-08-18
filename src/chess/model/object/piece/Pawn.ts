@@ -15,13 +15,13 @@ export default class Pawn extends Piece {
     constructor(color: PieceColor, initialSquare: BoardLocation) {
         super(PieceType.PAWN, color, initialSquare);
         this._moves.push(new OneForward(false, true, false,
-                color == PieceColor.WHITE ? Direction.INCREASING : Direction.DECREASING),
+                color == PieceColor.WHITE ? Direction.TO_BLACK_SIDE : Direction.TO_WHITE_SIDE),
             new OneDiagonalForward(true, false, true,
-                color == PieceColor.WHITE ? Direction.INCREASING : Direction.DECREASING)
+                color == PieceColor.WHITE ? Direction.TO_BLACK_SIDE : Direction.TO_WHITE_SIDE)
         );
 
         this._twoForward = new TwoForward(false, true, false,
-            color == PieceColor.WHITE ? Direction.INCREASING : Direction.DECREASING);
+            color == PieceColor.WHITE ? Direction.TO_BLACK_SIDE : Direction.TO_WHITE_SIDE);
         this._enPassant = null;
     }
 
@@ -51,11 +51,11 @@ export default class Pawn extends Piece {
 
     private assignSidePiecesToEnPassant(gameModel: GameModel, to: BoardLocation): void {
         const leftSquare = BoardModel.leftSquare(to);
-        if (leftSquare) {
+        if (leftSquare != "") {
             this.assignNeighborToEnPassant(gameModel, leftSquare, to);
         }
         const rightSquare = BoardModel.rightSquare(to);
-        if (rightSquare) {
+        if (rightSquare != "") {
             this.assignNeighborToEnPassant(gameModel, rightSquare, to);
         }
     }
@@ -64,7 +64,7 @@ export default class Pawn extends Piece {
         const piece: Piece = gameModel.getBoardSquareContents(loc);
         if (piece.type === PieceType.PAWN) {
             (piece as Pawn)._enPassant = new EnPassant(true, false, true,
-                piece.color == PieceColor.WHITE ? Direction.INCREASING : Direction.DECREASING, grantorLocation);
+                piece.color == PieceColor.WHITE ? Direction.TO_BLACK_SIDE : Direction.TO_WHITE_SIDE, grantorLocation);
             gameModel.assignToEnPassant(piece);
         }
     }
