@@ -65,7 +65,7 @@ export default abstract class Move {
     }
 
     private isCapturing(captureSquareContents: Piece): boolean {
-        return !isEqual(captureSquareContents, NO_PIECE);
+        return !isEqual(captureSquareContents, NO_PIECE); // TODO check opposing color piece is being captured
     }
 
     /**

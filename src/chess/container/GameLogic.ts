@@ -77,6 +77,10 @@ export class GameLogic {
         const piece:Piece = this._gameModel.getBoardSquareContents(from);
         if(!isEqual(piece,NO_PIECE) && piece.makeMove(this._gameModel,from,to)) {
             /* TODO Check for checkmate */
+            // Ways to get out of check:
+            //  1. Capture checking piece
+            //  2. Move king out of check
+            //  3. Block path between checking piece and king
             this.toggleTurn();
             return true; // TODO make piece object for presentation/container; return captured piece or no piece to UI
         }
