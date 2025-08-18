@@ -2,54 +2,9 @@ import './BoardUI.css'
 import {useEffect, useState} from "react";
 import {GameLogic} from "../container/GameLogic";
 import React from 'react';
-import CryptoJS from "crypto-js";
-import Sha256 from "crypto-js/sha256";
+import Controls from "./ControlsUI";
 
 export default function Game() {
-    const importGameModel = (event:any) => {
-        event.preventDefault();
-        const reader = new FileReader();
-        reader.readAsText(event.target.files[0]);
-        reader.onloadend = () => {
-            const clicks:BoardLocation[] = JSON.parse(reader.result as string).clicks;
-            const gl:GameLogic = new GameLogic();
-            for(let click of clicks) {
-                gl.selectSquare(click);
-            }
-            setGameLogic(gl);
-        }
-    };
-
-    const exportGameModel = () => {
-        const boards:string[][][] = generateExportData();
-        const content:string = JSON.stringify({clicks: clicks, boards: boards});
-        const blob = new Blob([content], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement('a');
-        a.href = url;
-        const filename:string = Sha256(content).toString(CryptoJS.enc.Hex);
-        a.download = filename + '.json';
-
-        // Append to body and click to trigger download, then remove
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-        // Clean up the object URL
-        URL.revokeObjectURL(url);
-    };
-
-    const generateExportData = () => {
-        const boards: string[][][] = [];
-        let gl: GameLogic = new GameLogic();
-        for (let aClick of clicks) {
-            gl.selectSquare(aClick);
-            boards.push(gl.boardStringView);
-        }
-        return boards;
-    }
-
     const [gameLogic,setGameLogic] = useState<GameLogic>(new GameLogic()); // TODO ***determine whether this and other classes need to be function-based***
     const [selection, setSelection] = useState<BoardLocation>("");
     const [clicks, setClicks] = useState<BoardLocation[]>([]);
@@ -68,24 +23,7 @@ export default function Game() {
                 <BoardUI className={"board"} selection={selection} board={gameLogic.boardStringView} onSquareClick={handleSquareClick} />
             </span>
             <span>
-            <table>
-                <thead>
-                        <tr><td>Controls</td></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <input id={"btnImportInput"} type={"file"} onChange={importGameModel} hidden={true} />
-                            <label htmlFor={"btnImportInput"}>
-                                Import board...
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><button id={"btnExport"} onClick={exportGameModel}>Export board...</button></td>
-                    </tr>
-                </tbody>
-            </table>
+                <Controls className={"controls"} clicks={clicks} setGameLogic={setGameLogic} setClicks={setClicks} />
             </span>
             </div>
         </>
