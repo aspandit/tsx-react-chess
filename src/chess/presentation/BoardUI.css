@@ -5,6 +5,20 @@
     --piece-size: 2em;
 }
 
+.right-margin {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.status-bar {
+    margin-bottom: auto;
+}
+
+.controls {
+    margin-top: auto;
+}
+
 .main {
     display: inline-flex;
 }

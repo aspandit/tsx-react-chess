@@ -4,10 +4,11 @@ import {GameLogic} from "../container/GameLogic";
 import Sha256 from "crypto-js/sha256";
 import CryptoJS from "crypto-js";
 
-export default function Controls(props: {className: string, clicks: BoardLocation[], setGameLogic:(gl:GameLogic) => void, setClicks:(clicks: BoardLocation[]) => void}) {
+export default function Controls(props: {className: string, clicks: BoardLocation[], setGameLogic:(gl:GameLogic) => void, setClicks:(clicks: BoardLocation[]) => void, setStatusMessage:(statusMessage:string) => void}) {
     const clicks = props.clicks;
     const setClicks = props.setClicks;
     const setGameLogic = props.setGameLogic;
+    const setStatusMessage = props.setStatusMessage;
 
     const importGameModel = (event:any) => {
         event.preventDefault();
@@ -21,6 +22,7 @@ export default function Controls(props: {className: string, clicks: BoardLocatio
             }
             setClicks(iClicks);
             setGameLogic(gl);
+            setStatusMessage(gl.info);
         }
     };
 

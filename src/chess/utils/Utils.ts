@@ -22,3 +22,10 @@ export function xor(a:boolean, b:boolean):boolean {
 export function isEqual(a:object, b:object):boolean {
     return _.isEqual(a,b);
 }
+
+export function capitalizeFirstLetter(str:string):string {
+    if(str && str.length > 0) {
+        str = str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
+    return str;
+}

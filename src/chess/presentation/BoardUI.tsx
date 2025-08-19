@@ -8,30 +8,39 @@ export default function Game() {
     const [gameLogic,setGameLogic] = useState<GameLogic>(new GameLogic()); // TODO ***determine whether this and other classes need to be function-based***
     const [selection, setSelection] = useState<BoardLocation>("");
     const [clicks, setClicks] = useState<BoardLocation[]>([]);
+    const [statusMessage, setStatusMessage] = useState<string>("White to move.");
+
+    return (
+        <>
+            <div className={"main"}>
+                <span>
+                    <BoardUI className={"board"} selection={selection} board={gameLogic.boardStringView} gameLogic={gameLogic} clicks={clicks} setClicks={setClicks}
+                                setStatusMessage={setStatusMessage} setSelection={setSelection} />
+                </span>
+                <span className={"right-margin"}>
+                    <span className={"status-bar"}>{statusMessage}</span>
+                    <Controls className={"controls"} clicks={clicks} setGameLogic={setGameLogic} setClicks={setClicks} setStatusMessage={setStatusMessage} />
+                </span>
+            </div>
+        </>
+    );
+}
+
+function BoardUI(props: {className: string, selection:BoardLocation, board:string[][], gameLogic:GameLogic, clicks:BoardLocation[], setClicks:(clicks:BoardLocation[]) => void, setSelection:(selection:BoardLocation) => void, setStatusMessage:(statusMessage:string) => void}) {
+    const selection:BoardLocation = props.selection;
+    const gameLogic:GameLogic = props.gameLogic;
+    const clicks:BoardLocation[] = props.clicks;
+    const setClicks:(clicks:BoardLocation[]) => void = props.setClicks;
+    const setSelection:(selection:BoardLocation) => void = props.setSelection;
+    const setStatusMessage:(statusMessage:string) => void = props.setStatusMessage;
 
     const handleSquareClick = (coords:BoardLocation) => {
         clicks.push(coords);
         setClicks(clicks);
 
         setSelection(gameLogic.selectSquare(coords));
+        setStatusMessage(gameLogic.info);
     };
-
-    return (
-        <>
-            <div className={"main"}>
-            <span>
-                <BoardUI className={"board"} selection={selection} board={gameLogic.boardStringView} onSquareClick={handleSquareClick} />
-            </span>
-            <span>
-                <Controls className={"controls"} clicks={clicks} setGameLogic={setGameLogic} setClicks={setClicks} />
-            </span>
-            </div>
-        </>
-    );
-}
-
-function BoardUI(props: {className: string, selection:BoardLocation, board:string[][], onSquareClick:(coord:BoardLocation) => void}) {
-    const selection:BoardLocation = props.selection;
 
     useEffect(() => {
         // Clear previous selection(s)
@@ -53,7 +62,7 @@ function BoardUI(props: {className: string, selection:BoardLocation, board:strin
                     GameLogic.rowCoordinates.map((coord: string, idx: number) => <Row className={"row"} key={coord}
                                                                                       coordinate={coord}
                                                                                       row={props.board[idx]}
-                                                                                      onSquareClick={props.onSquareClick} />)
+                                                                                      onSquareClick={handleSquareClick} />)
                 }
                 {/*Generate lower-left coordinate label*/}
                 <CoordinateLabel className={"cornerCoordinate"} key={" "} coordinate={" "}/>
@@ -105,12 +114,13 @@ function Square(props: { key: string, className: string, coordinate: string, con
 }
 
 function SquareInner(props: { content: string, coordinate: string, onSquareClick: (coord:BoardLocation) => void }) {
-    function squareClick(coordinate: string) {
+    function squareClick(event: React.MouseEvent<HTMLSpanElement, MouseEvent>, coordinate: string) {
+        event.preventDefault();
         props.onSquareClick(coordinate as BoardLocation);
     }
 
     return (
-        <span className={"square-inner"} onClick={() => squareClick(props.coordinate)}>
+        <span className={"square-inner"} onClick={(event) => squareClick(event,props.coordinate)}>
           {props.content}
         </span>
     );

@@ -2,7 +2,7 @@ import BoardModel from "../model/BoardModel";
 import GameModel from "../model/GameModel";
 import Piece, {PieceColor} from "../model/object/piece/baseclass/Piece";
 import {NO_PIECE} from "../model/object/piece/NoPiece";
-import {isEqual} from "../utils/Utils";
+import {capitalizeFirstLetter, isEqual} from "../utils/Utils";
 
 // TODO add Castle move with check for check in castled king squares
 // TODO add pawn promotion
@@ -36,7 +36,19 @@ export class GameLogic {
         return bsv;
     }
 
+    get info() {
+        const currPlayer:string = capitalizeFirstLetter(this._gameModel.player) + " to move.";
+        const checkedPlayer:string = this._gameModel.checkedPlayer != "" ? capitalizeFirstLetter(this._gameModel.checkedPlayer) + " is in check." : "";
+        const winner:string = capitalizeFirstLetter(this._gameModel.winner) + " wins.";
+        const stalemate:string = this._gameModel.gameOver ? "This match concluded in a stalemate." : "";
+        return [winner, stalemate, checkedPlayer, currPlayer][[this._gameModel.winner, stalemate, checkedPlayer, this._gameModel.player].findIndex((str:string):boolean => str !== "")];
+    }
+
     selectSquare(coords: BoardLocation): BoardLocation {
+        if(this._gameModel.gameOver) {
+            return "";
+        }
+
         if(this._selection === ""){ // no square was previously selected
             if(this.isSquareOccupiedByOwnPiece(coords)) { // initially selected square must have the player's own piece on it
                 this._selection = coords;
@@ -76,11 +88,6 @@ export class GameLogic {
     private movePiece(from:BoardLocation, to:BoardLocation):boolean {
         const piece:Piece = this._gameModel.getBoardSquareContents(from);
         if(!isEqual(piece,NO_PIECE) && piece.makeMove(this._gameModel,from,to)) {
-            /* TODO Check for checkmate */
-            // Ways to get out of check:
-            //  1. Capture checking piece
-            //  2. Move king out of check
-            //  3. Block path between checking piece and king
             this.toggleTurn();
             return true; // TODO make piece object for presentation/container; return captured piece or no piece to UI
         }

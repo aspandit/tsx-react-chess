@@ -10,8 +10,14 @@ export default class GameModel {
     private readonly _boardModel: BoardModel;
     private _player: Player;
     private readonly _enPassantPawns: { [key in PieceColor]: Pawn[] }; // manages the pawns with en passant capabilities
+    private _gameOver: boolean;
+    private _checkedPlayer: Player | "";
+    private _winner: Player | "";
 
     constructor() {
+        this._gameOver = false;
+        this._checkedPlayer = "";
+        this._winner = "";
         this._boardModel = new BoardModel();
         this._player = "WHITE";
         this._enPassantPawns = {
@@ -38,10 +44,39 @@ export default class GameModel {
                 pawn.clearEnPassant();
             }
         }
+
+        this.checkForCheck();
+    }
+
+    checkForCheck() {
+        const currColor:PieceColor = this.player === "WHITE" ? PieceColor.WHITE : PieceColor.BLACK;
+        if(this.isBoardLocationThreatened(this.getKingLocation(),currColor)) {
+            this._checkedPlayer = this.player;
+        }
+        else {
+            this._checkedPlayer = "";
+        }
+    }
+
+    endGame(winner: Player): void {
+        this._gameOver = true;
+        this._winner = winner;
+    }
+
+    get winner(): Player | "" {
+        return this._winner;
+    }
+
+    get gameOver() {
+        return this._gameOver;
     }
 
     get player() {
         return this._player;
+    }
+
+    get checkedPlayer() {
+        return this._checkedPlayer;
     }
 
     set player(player: Player) {
