@@ -9,9 +9,11 @@ export default class King extends Piece {
         this._moves.push(new OneAdjacent(false, false, false, Direction.EITHER));
     }
 
-    makeMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
-        if(super.makeMove(gameModel, from, to)) {
-            gameModel.updateKingLocation(this,to);
+    makeMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation, rollback: boolean): boolean {
+        if(super.makeMove(gameModel, from, to, rollback)) {
+            if(!rollback) {
+                gameModel.updateKingLocation(this,to);
+            }
             return true;
         }
         return false;

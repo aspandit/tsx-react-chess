@@ -47,7 +47,7 @@ export class GameLogic {
 
     selectSquare(coords: BoardLocation): BoardLocation {
         if(this._gameModel.gameOver) {
-            return "";
+            return ""; // if game is over, do not allow for any more moves
         }
 
         if(this._selection === ""){ // no square was previously selected
@@ -88,7 +88,7 @@ export class GameLogic {
 
     private movePiece(from:BoardLocation, to:BoardLocation):boolean {
         const piece:Piece = this._gameModel.getBoardSquareContents(from);
-        if(!isEqual(piece,NO_PIECE) && piece.makeMove(this._gameModel,from,to)) {
+        if(!isEqual(piece,NO_PIECE) && piece.makeMove(this._gameModel,from,to,false)) {
             this.toggleTurn();
             return true; // TODO make piece object for presentation/container; return captured piece or no piece to UI
         }

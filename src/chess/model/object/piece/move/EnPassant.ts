@@ -22,9 +22,10 @@ export default class EnPassant extends Move {
         return [];
     }
 
-    protected doMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
+    protected doMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation, rollback: boolean): boolean {
         const fromObj = BoardModel.parseBoardLocation(from);
         const toObj = BoardModel.parseBoardLocation(to);
+        let moveAllowed: boolean = false;
         const targetLocation: BoardLocation = (BoardModel.colCoordinates[toObj.colIndex] + BoardModel.rowCoordinates[fromObj.rowIndex]) as BoardLocation;
 
         if(targetLocation !== this._grantorLocation) {
@@ -39,15 +40,15 @@ export default class EnPassant extends Move {
         gameModel.setBoardSquareContents(targetLocation, NO_PIECE);
 
         // Rollback and return false if own king is threatened after move - a player cannot put themselves in check
-        if(gameModel.isBoardLocationThreatened(gameModel.getKingLocation(), movingPawn.color)) {
+        moveAllowed = !gameModel.isBoardLocationThreatened(gameModel.getKingLocation(), movingPawn.color);
+
+        if(rollback || !moveAllowed) {
             gameModel.setBoardSquareContents(to, NO_PIECE);
             gameModel.setBoardSquareContents(from, movingPawn);
             gameModel.setBoardSquareContents(targetLocation, targetPawn);
-
-            return false;
         }
 
-        return true;
+        return moveAllowed;
     }
 
     protected getCaptureSquareContents(gameModel:GameModel, fromLoc: ParsedBoardLocation, toLoc: ParsedBoardLocation): Piece {

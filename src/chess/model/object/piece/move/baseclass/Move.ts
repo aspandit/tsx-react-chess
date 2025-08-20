@@ -23,19 +23,21 @@ export default abstract class Move {
      * @param gameModel the current game model; the model is needed here because a copy of the board is returned from boardModel.board for safety/encapsulation
      * @param from the starting coordinate for the move
      * @param to the ending coordinate for the move
+     * @param rollback directs the doMove method to rollback; used to check for stalemate
      */
-    makeMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
+    makeMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation, rollback: boolean): boolean {
         const fromLoc: ParsedBoardLocation = BoardModel.parseBoardLocation(from);
         const toLoc: ParsedBoardLocation = BoardModel.parseBoardLocation(to);
 
         const captureSquareContents: Piece = this.getCaptureSquareContents(gameModel, fromLoc, toLoc);
-        const pathShapeCorrect = this.isPathShapeCorrect(fromLoc, toLoc);
+        if(!this.isPathShapeCorrect(fromLoc, toLoc)) {
+            return false; // no need to check anything else if the path shape is not correct
+        }
         const pathClear = this.isPathClear(this.getPath(gameModel, fromLoc, toLoc));
         const capturing = this.isCapturing(captureSquareContents);
-        if (pathShapeCorrect
-            && (this._clearPathOptional || pathClear)
+        if ((this._clearPathOptional || pathClear)
             && ((!this._captureRequired || capturing) && (!this._captureProhibited || !capturing))) {
-            return this.doMove(gameModel, from, to);
+            return this.doMove(gameModel, from, to, rollback);
         } else {
             return false;
         }
@@ -74,26 +76,27 @@ export default abstract class Move {
      * @param gameModel
      * @param from
      * @param to
+     * @param rollback if the current move should be rolled back after it is made
      * @protected
      */
-    protected doMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
+    protected doMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation, rollback: boolean): boolean {
         const movingPiece:Piece = gameModel.getBoardSquareContents(from);
         const toLocPiece:Piece = gameModel.getBoardSquareContents(to);
+        let moveAllowed: boolean = false;
         // make the move - order is important HERE
         gameModel.setBoardSquareContents(to, movingPiece);
         gameModel.setBoardSquareContents(from, NO_PIECE);
 
         // Rollback and return false if own king is threatened after move - a player cannot put themselves in check
             // if the king is being moved make sure to see if they are moving into a checked location
-        if((movingPiece.type === PieceType.KING && gameModel.isBoardLocationThreatened(to,movingPiece.color))
-            || (movingPiece.type !== PieceType.KING && gameModel.isBoardLocationThreatened(gameModel.getKingLocation(),movingPiece.color))) {
+        moveAllowed = !((movingPiece.type === PieceType.KING && gameModel.isBoardLocationThreatened(to, movingPiece.color))
+            || (movingPiece.type !== PieceType.KING && gameModel.isBoardLocationThreatened(gameModel.getKingLocation(), movingPiece.color)));
+
+        if(rollback || !moveAllowed) {
             gameModel.setBoardSquareContents(to, toLocPiece);
             gameModel.setBoardSquareContents(from, movingPiece);
-
-            return false;
         }
-
-        return true;
+        return moveAllowed;
     }
 
     protected getCaptureSquareContents(gameModel:GameModel, fromLoc: ParsedBoardLocation, toLoc: ParsedBoardLocation): Piece {

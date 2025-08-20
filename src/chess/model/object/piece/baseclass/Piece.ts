@@ -39,10 +39,10 @@ export default abstract class Piece {
         return this._pieceLabel;
     }
 
-    makeMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
+    makeMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation, rollback: boolean): boolean {
         // Any one of the moves needs to be valid
         return this._moves.reduce((acc, curr) => {
-            return acc || curr.makeMove(gameModel, from, to)
+            return acc || curr.makeMove(gameModel, from, to, rollback)
         }, false);
     }
 }

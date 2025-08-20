@@ -112,6 +112,7 @@ export default class BoardModel {
 
     static getValidBoardLocationByOffset(coords:BoardLocation, rowOffset:number, colOffset:number):BoardLocation {
         const parsed = BoardModel.parseBoardLocation(coords);
+        rowOffset = -rowOffset; // this is because the row numbers increase moving from the top row(row 8) to the bottom row(row 1)
         if(parsed.colIndex + colOffset >= 0 &&
             parsed.colIndex + colOffset < BoardModel.colCoordinates.length &&
             parsed.rowIndex + rowOffset >= 0 &&

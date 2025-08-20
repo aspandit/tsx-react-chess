@@ -45,20 +45,65 @@ export default class GameModel {
             }
         }
 
-        this.checkForCheck();
+        const currColor: PieceColor = this.player.toString() === "WHITE" ? PieceColor.WHITE : PieceColor.BLACK;
+        if(this.checkForCheck()) {
+            // Check for checkmate condition
+            // 1) can the checking piece be captured AND, if so, will that release the current player from check
+
+            // 2) can the current player's king be moved out of check
+
+            // 3) can the current player move another piece to block the checking piece
+        }
+        else {
+            // Check for stalemate condition - TODO this is inefficient, but works: refactor at some point
+            const board: Piece[][] = this.boardCopy;
+            for(let r: number = 0;r < board.length;r++) {
+                for(let c: number = 0;c < board[r].length;c++) {
+                    const piece: Piece = board[r][c];
+                    if(piece.color === currColor) {
+                        const loc: BoardLocation = BoardModel.getValidBoardLocationByOffset("a1",r,c);
+                        const moves:BoardLocation[] = piece.type === PieceType.KNIGHT
+                            ? BoardModel.getValidLShapedOffsets(loc)
+                            : [BoardModel.getValidBoardLocationByOffset(loc,-1,1),
+                                BoardModel.getValidBoardLocationByOffset(loc,1,-1),
+                                BoardModel.getValidBoardLocationByOffset(loc,-1,-1),
+                                BoardModel.getValidBoardLocationByOffset(loc,1,1),
+                                BoardModel.getValidBoardLocationByOffset(loc,-1,0),
+                                BoardModel.getValidBoardLocationByOffset(loc,0,1),
+                                BoardModel.getValidBoardLocationByOffset(loc,0,-1),
+                                BoardModel.getValidBoardLocationByOffset(loc,1,0)] // this is all eight square around the current location;
+                                                                                                        // a piece needs to move at least one square
+                                                                                                        // away to be able to move more than one square away
+                                .filter((bl:BoardLocation): boolean => bl != "");
+                        for(let mv of moves) {
+                            if (piece.makeMove(this, loc, mv, true)) {
+                                return; // as soon as a legal move is found, break out of method (do NOT end match)
+                            }
+                        }
+                    }
+                }
+            }
+            this.endMatch(""); // end in stalemate - TODO TEST THIS "STALEMATE" CASE
+        }
     }
 
-    checkForCheck() {
+    /**
+     * Checks if the current player is in check and returns true if so. This method should be called after
+     * the turn is over.
+     */
+    checkForCheck():boolean {
         const currColor:PieceColor = this.player === "WHITE" ? PieceColor.WHITE : PieceColor.BLACK;
         if(this.isBoardLocationThreatened(this.getKingLocation(),currColor)) {
             this._checkedPlayer = this.player;
+            return true;
         }
         else {
             this._checkedPlayer = "";
+            return false;
         }
     }
 
-    endGame(winner: Player): void {
+    endMatch(winner: Player | ""): void {
         this._gameOver = true;
         this._winner = winner;
     }
@@ -121,7 +166,8 @@ export default class GameModel {
     }
 
     /**
-     * Determines if square is a threat on location for locationColor in the current gameModel
+     * Determines if square is under threat for a particular location and locationColor in the current gameModel. Use this to ensure
+     * the current move is not putting the current player into check or to see if the latest move put the current player into check.
      * @param location
      * @param locationColor
      */

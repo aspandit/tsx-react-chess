@@ -25,20 +25,24 @@ export default class Pawn extends Piece {
         this._enPassant = null;
     }
 
-    makeMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation): boolean {
-        if (this._twoForward?.makeMove(gameModel, from, to)) {
+    makeMove(gameModel: GameModel, from: BoardLocation, to: BoardLocation, rollback: boolean): boolean {
+        if (this._twoForward?.makeMove(gameModel, from, to, rollback)) {
             // remove TwoForward move once moved
-            this._twoForward = null;
-            this.assignSidePiecesToEnPassant(gameModel, to);
+            if(!rollback) {
+                this._twoForward = null;
+                this.assignSidePiecesToEnPassant(gameModel, to);
+            }
             return true;
         }
-        if (this._enPassant?.makeMove(gameModel, from, to)) {
+        if (this._enPassant?.makeMove(gameModel, from, to, rollback)) {
             // this._enPassant should be cleared by the game model on the next turn
             return true;
         }
-        if (super.makeMove(gameModel, from, to)) {
+        if (super.makeMove(gameModel, from, to, rollback)) {
             // remove TwoForward move once moved
-            this._twoForward = null;
+            if(!rollback) {
+                this._twoForward = null;
+            }
             // give option of PawnPromotion if in last row
             return true;
         }
