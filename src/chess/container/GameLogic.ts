@@ -38,8 +38,8 @@ export class GameLogic {
 
     get info() {
         const checkedPlayer:string = this._gameModel.checkedPlayer != "" ? capitalizeFirstLetter(this._gameModel.checkedPlayer) + " is in check." : "";
-        const winner:string = this._gameModel.winner != "" ? capitalizeFirstLetter(this._gameModel.winner) + " wins." : "";
-        const stalemate:string = this._gameModel.gameOver ? "This match concluded in a stalemate." : "";
+        const winner:string = this._gameModel.gameOver && this._gameModel.winner != "" ? capitalizeFirstLetter(this._gameModel.winner) + " wins." : "";
+        const stalemate:string = this._gameModel.gameOver && this._gameModel.winner == "" ? "This match concluded in a stalemate." : "";
         const info = [winner, stalemate, checkedPlayer].find((str:string):boolean => str !== "");
 
         return info ? info : capitalizeFirstLetter(this._gameModel.player) + " to move.";
