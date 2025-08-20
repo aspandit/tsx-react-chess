@@ -37,11 +37,12 @@ export class GameLogic {
     }
 
     get info() {
-        const currPlayer:string = capitalizeFirstLetter(this._gameModel.player) + " to move.";
         const checkedPlayer:string = this._gameModel.checkedPlayer != "" ? capitalizeFirstLetter(this._gameModel.checkedPlayer) + " is in check." : "";
         const winner:string = this._gameModel.winner != "" ? capitalizeFirstLetter(this._gameModel.winner) + " wins." : "";
         const stalemate:string = this._gameModel.gameOver ? "This match concluded in a stalemate." : "";
-        return [winner, stalemate, checkedPlayer, currPlayer].find((str:string):boolean => str !== "");
+        const info = [winner, stalemate, checkedPlayer].find((str:string):boolean => str !== "");
+
+        return info ? info : capitalizeFirstLetter(this._gameModel.player) + " to move.";
     }
 
     selectSquare(coords: BoardLocation): BoardLocation {
