@@ -43,6 +43,35 @@ export default class BoardModel {
         ],
     ];
 
+    static stalemateBoard: Piece[][] = [
+        [
+            new NoPiece(PieceColor.NO_COLOR, ""),
+            new NoPiece(PieceColor.NO_COLOR, ""),
+            new NoPiece(PieceColor.NO_COLOR, ""),
+            new NoPiece(PieceColor.NO_COLOR, ""),
+            new King(PieceColor.BLACK, "e8"),
+            new NoPiece(PieceColor.NO_COLOR, ""),
+            new NoPiece(PieceColor.NO_COLOR, ""),
+            new NoPiece(PieceColor.NO_COLOR, "")
+        ],
+        Array(8).fill(new NoPiece(PieceColor.NO_COLOR, "")),
+        Array(8).fill(new NoPiece(PieceColor.NO_COLOR, "")),
+        Array(8).fill(new NoPiece(PieceColor.NO_COLOR, "")),
+        Array(8).fill(new NoPiece(PieceColor.NO_COLOR, "")),
+        Array(8).fill(new NoPiece(PieceColor.NO_COLOR, "")),
+        Array(8).fill(new NoPiece(PieceColor.NO_COLOR, "")),
+        [
+            new NoPiece(PieceColor.NO_COLOR, ""),
+            new NoPiece(PieceColor.NO_COLOR, ""),
+            new NoPiece(PieceColor.NO_COLOR, ""),
+            new Queen(PieceColor.WHITE, "d1"),
+            new King(PieceColor.WHITE, "e1"),
+            new NoPiece(PieceColor.NO_COLOR, ""),
+            new NoPiece(PieceColor.NO_COLOR, ""),
+            new NoPiece(PieceColor.NO_COLOR, "")
+        ],
+    ];
+
     constructor() {
         this._board = [];
         for (let row of BoardModel.initBoard) {
@@ -78,6 +107,7 @@ export default class BoardModel {
     }
 
     static parseBoardLocation(coordinate: BoardLocation): ParsedBoardLocation {
+        // TODO have error for ""
         return {
             rowIndex: BoardModel.rowCoordinates.indexOf(coordinate.toString().charAt(1)),
             colIndex: BoardModel.colCoordinates.indexOf(coordinate.toString().charAt(0))
@@ -110,9 +140,18 @@ export default class BoardModel {
         return BoardModel.getValidBoardLocationByOffset(coord,0,1);
     }
 
+    /**
+     * Returns a board location {@link rowOffset} units down and {@link colOffset} units right from {@link coords}. Note that row offsets
+     * are positive in the DOWN direction and column offsets are positive in the RIGHT direction.
+     *
+     * That is, {@linkcode BoardModel.getValidBoardLocationByOffset}("a8",[0..7],[0..7]) is the full range of the board.
+     * See BoardModel.test.ts for more examples.
+     * @param coords
+     * @param rowOffset
+     * @param colOffset
+     */
     static getValidBoardLocationByOffset(coords:BoardLocation, rowOffset:number, colOffset:number):BoardLocation {
         const parsed = BoardModel.parseBoardLocation(coords);
-        rowOffset = -rowOffset; // this is because the row numbers increase moving from the top row(row 8) to the bottom row(row 1)
         if(parsed.colIndex + colOffset >= 0 &&
             parsed.colIndex + colOffset < BoardModel.colCoordinates.length &&
             parsed.rowIndex + rowOffset >= 0 &&

@@ -61,7 +61,7 @@ export default class GameModel {
                 for(let c: number = 0;c < board[r].length;c++) {
                     const piece: Piece = board[r][c];
                     if(piece.color === currColor) {
-                        const loc: BoardLocation = BoardModel.getValidBoardLocationByOffset("a1",r,c);
+                        const loc: BoardLocation = BoardModel.getValidBoardLocationByOffset("a8",r,c); // offsets of row and columns are from top left square
                         const moves:BoardLocation[] = piece.type === PieceType.KNIGHT
                             ? BoardModel.getValidLShapedOffsets(loc)
                             : [BoardModel.getValidBoardLocationByOffset(loc,-1,1),

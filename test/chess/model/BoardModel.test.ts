@@ -3,7 +3,7 @@ import BoardModel from "../../../src/chess/model/BoardModel";
 
 describe("GameModel", () => {
     test("Test offsets", () => {
-        expect(BoardModel.getValidBoardLocationByOffset("a1", 1, 1)).toBe("b2");
-        expect(BoardModel.getValidBoardLocationByOffset("a8", -1, 1)).toBe("b7");
+        expect(BoardModel.getValidBoardLocationByOffset("a1", 1, 1)).toBe("");
+        expect(BoardModel.getValidBoardLocationByOffset("a8", 7, 1)).toBe("b1");
     });
 });
