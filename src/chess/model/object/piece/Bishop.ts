@@ -1,5 +1,5 @@
 import Piece, {PieceColor, PieceType} from "./baseclass/Piece";
-import Diagonal from "./move/Diagonal";
+import Diagonal from "../move/Diagonal";
 import {Direction} from "../Direction";
 
 export default class Bishop extends Piece {

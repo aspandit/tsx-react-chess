@@ -1,9 +1,9 @@
-import Piece, {PieceType} from "../../baseclass/Piece";
-import BoardModel from "../../../../BoardModel";
-import {NO_PIECE} from "../../NoPiece";
-import {Direction} from "../../../Direction";
-import {isEqual} from "../../../../../utils/Utils";
-import GameModel from "../../../../GameModel";
+import Piece, {PieceType} from "../../piece/baseclass/Piece";
+import BoardModel from "../../../BoardModel";
+import {NO_PIECE} from "../../piece/NoPiece";
+import {Direction} from "../../Direction";
+import {isEqual} from "../../../../utils/Utils";
+import GameModel from "../../../GameModel";
 
 export default abstract class Move {
     protected _captureRequired: boolean;

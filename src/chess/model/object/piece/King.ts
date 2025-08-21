@@ -1,5 +1,5 @@
 import Piece, {PieceColor, PieceType} from "./baseclass/Piece";
-import OneAdjacent from "./move/OneAdjacent";
+import OneAdjacent from "../move/OneAdjacent";
 import {Direction} from "../Direction";
 import GameModel from "../../GameModel";
 

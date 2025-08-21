@@ -1,11 +1,11 @@
 import Piece, {PieceColor, PieceType} from "./baseclass/Piece";
-import OneForward from "./move/OneForward";
-import OneDiagonalForward from "./move/OneDiagonalForward";
+import OneForward from "../move/OneForward";
+import OneDiagonalForward from "../move/OneDiagonalForward";
 import {Direction} from "../Direction";
 import BoardModel from "../../BoardModel";
-import TwoForward from "./move/TwoForward";
-import Move from "./move/baseclass/Move";
-import EnPassant from "./move/EnPassant";
+import TwoForward from "../move/TwoForward";
+import Move from "../move/baseclass/Move";
+import EnPassant from "../move/EnPassant";
 import GameModel from "../../GameModel";
 
 export default class Pawn extends Piece {

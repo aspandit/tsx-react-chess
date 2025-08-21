@@ -1,4 +1,4 @@
-import Move from "../move/baseclass/Move";
+import Move from "../../move/baseclass/Move";
 import GameModel from "../../../GameModel";
 
 export default abstract class Piece {

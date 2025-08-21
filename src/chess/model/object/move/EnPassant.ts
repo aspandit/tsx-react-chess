@@ -1,9 +1,9 @@
 import Move from "./baseclass/Move";
-import Piece from "../baseclass/Piece";
-import GameModel from "../../../GameModel";
-import BoardModel from "../../../BoardModel";
-import {NO_PIECE} from "../NoPiece";
-import {Direction} from "../../Direction";
+import Piece from "../piece/baseclass/Piece";
+import GameModel from "../../GameModel";
+import BoardModel from "../../BoardModel";
+import {NO_PIECE} from "../piece/NoPiece";
+import {Direction} from "../Direction";
 
 export default class EnPassant extends Move {
     _grantorLocation:BoardLocation; // location of the Pawn that granted the EnPassant ability

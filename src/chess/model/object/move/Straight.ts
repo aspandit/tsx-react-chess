@@ -1,7 +1,7 @@
-import Piece from "../baseclass/Piece";
+import Piece from "../piece/baseclass/Piece";
 import Move from "./baseclass/Move";
-import {openInterval, xor} from "../../../../utils/Utils";
-import GameModel from "../../../GameModel";
+import {openInterval, xor} from "../../../utils/Utils";
+import GameModel from "../../GameModel";
 
 export default class Straight extends Move {
     isPathShapeCorrect(from: ParsedBoardLocation, to: ParsedBoardLocation): boolean {

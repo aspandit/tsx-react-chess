@@ -1,7 +1,7 @@
 import Piece, {PieceColor, PieceType} from "./baseclass/Piece";
 import {Direction} from "../Direction";
-import Straight from "./move/Straight";
-import Diagonal from "./move/Diagonal";
+import Straight from "../move/Straight";
+import Diagonal from "../move/Diagonal";
 
 export default class Queen extends Piece {
     constructor(color: PieceColor, initialSquare: BoardLocation) {
