@@ -40,7 +40,7 @@ export default class EnPassant extends Move {
         gameModel.setBoardSquareContents(targetLocation, NO_PIECE);
 
         // Rollback and return false if own king is threatened after move - a player cannot put themselves in check
-        moveAllowed = !gameModel.isBoardLocationThreatened(gameModel.getKingLocation(), movingPawn.color);
+        moveAllowed = !gameModel.isBoardLocationThreatened(gameModel.getKingLocation(), movingPawn.color).underThreat;
 
         if(rollback || !moveAllowed) {
             gameModel.setBoardSquareContents(to, NO_PIECE);

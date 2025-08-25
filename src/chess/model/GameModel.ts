@@ -5,6 +5,7 @@ import King from "./object/piece/King";
 import {NO_PIECE} from "./object/piece/NoPiece";
 import {isEqual} from "../utils/Utils";
 import {Direction} from "./object/Direction";
+import ThreatStatus, {Threat} from "../container/object/ThreatStatus";
 
 export default class GameModel {
     private readonly _boardModel: BoardModel;
@@ -48,11 +49,16 @@ export default class GameModel {
         const currColor: PieceColor = this.player.toString() === "WHITE" ? PieceColor.WHITE : PieceColor.BLACK;
         if(this.checkForCheck()) {
             // Check for checkmate condition
-            // 1) can the checking piece be captured AND, if so, will that release the current player from check
-
-            // 2) can the current player's king be moved out of check
-
-            // 3) can the current player move another piece to block the checking piece
+            //  if(
+            //     // 1) can the checking piece be captured AND, if so, will that release the current player from check
+            //      this.canCheckingPieceBeCaptured()
+            //     // 2) can the current player's king be moved out of check
+            //     || this.canKingMoveOutOfCheck()
+            //     // 3) can the current player move another piece to block the checking piece
+            //     || this.canCheckBeBlocked()
+            //  ) {
+            //      this.endMatch(this.player);
+            //  }
         }
         else {
             // Check for stalemate condition - TODO this is inefficient, but works: refactor at some point
@@ -93,7 +99,7 @@ export default class GameModel {
      */
     checkForCheck():boolean {
         const currColor:PieceColor = this.player === "WHITE" ? PieceColor.WHITE : PieceColor.BLACK;
-        if(this.isBoardLocationThreatened(this.getKingLocation(),currColor)) {
+        if(this.isBoardLocationThreatened(this.getKingLocation(),currColor).underThreat) {
             this._checkedPlayer = this.player;
             return true;
         }
@@ -171,12 +177,23 @@ export default class GameModel {
      * @param location
      * @param locationColor
      */
-    isBoardLocationThreatened(location:BoardLocation,locationColor:PieceColor):boolean {
-        return this.isThreatenedDiagonally(location,locationColor) || this.isThreatenedStraight(location,locationColor) || this.isThreatenedLShaped(location,locationColor);
+    isBoardLocationThreatened(location:BoardLocation,locationColor:PieceColor):ThreatStatus {
+        let diagonally:ThreatStatus = this.isThreatenedDiagonally(location,locationColor);
+        let straight:ThreatStatus = this.isThreatenedStraight(location,locationColor);
+        let lShaped:ThreatStatus = this.isThreatenedLShaped(location,locationColor);
+
+        if(diagonally.underThreat || straight.underThreat || lShaped.underThreat) {
+            const threat:ThreatStatus = new ThreatStatus(true, location, Piece.getPlayer(locationColor));
+
+            threat.merge([diagonally,straight,lShaped]);
+
+            return threat;
+        }
+        return new ThreatStatus(false, location, locationColor == PieceColor.WHITE ? "WHITE" : "BLACK");
     }
 
-    private isThreatenedDiagonally(location:BoardLocation,locationColor:PieceColor):boolean {
-        const piecesNOffset:[number,Piece][] = [];
+    private isThreatenedDiagonally(location:BoardLocation,locationColor:PieceColor):ThreatStatus {
+        const piecesNOffset:[number,Piece,BoardLocation,BoardLocation[]][] = [];
         const oppColor:PieceColor = locationColor === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE; // TODO add error for NO_COLOR
 
         // Get Piece or no piece in all four diagonal directions
@@ -189,7 +206,7 @@ export default class GameModel {
                 if (loc != "") {
                     const piece: Piece = this.getBoardSquareContents(loc);
                     if (piece.type !== PieceType.NO_TYPE) {
-                        piecesNOffset.push([offset, piece]);
+                        piecesNOffset.push([rdir*offset, piece, loc, BoardModel.getDiagonalBoardLocations(location,rdir*offset,cdir*offset)]);
                         break; // got the terminal piece in this direction; now break out of for loop
                     }
                 }
@@ -199,30 +216,37 @@ export default class GameModel {
             }
         }
 
+        const threats:Threat[] = [];
+
         // For each piece/offset, check if Piece is threat
-            // return true or false accordingly
-        for(let [offset,piece] of piecesNOffset) {
+        for(let [roffset,piece,threatLocation,threatPath] of piecesNOffset) {
             if(!isEqual(piece,NO_PIECE) && piece.color === oppColor) {
                 if (piece.type === PieceType.PAWN) {
-                    if(offset === Direction.TO_BLACK_SIDE && piece.color === PieceColor.WHITE) {
-                        return true;
+                    if(roffset === Direction.TO_BLACK_SIDE && piece.color === PieceColor.WHITE) {
+                        threats.push(new Threat(threatLocation,piece.type,threatPath));
                     }
 
-                    if(offset === Direction.TO_WHITE_SIDE && piece.color === PieceColor.BLACK) {
-                        return true;
+                    if(roffset === Direction.TO_WHITE_SIDE && piece.color === PieceColor.BLACK) {
+                        threats.push(new Threat(threatLocation,piece.type,threatPath));
                     }
                 }
                 else if(piece.type === PieceType.QUEEN || piece.type === PieceType.BISHOP) {
-                    return true;
+                    threats.push(new Threat(threatLocation,piece.type,threatPath));
                 }
             }
         }
 
-        return false;
+        if(threats.length > 0) {
+            let ts:ThreatStatus = new ThreatStatus(true, location, Piece.getPlayer(locationColor));
+            ts.addThreats(threats);
+            return ts;
+        }
+
+        return new ThreatStatus(false, location, Piece.getPlayer(locationColor));
     }
 
-    private isThreatenedStraight(location:BoardLocation,locationColor:PieceColor):boolean {
-        const pieces:Piece[] = [];
+    private isThreatenedStraight(location:BoardLocation,locationColor:PieceColor):ThreatStatus {
+        const pieces:[Piece,BoardLocation,BoardLocation[]][] = [];
         const oppColor:PieceColor = locationColor === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE; // TODO add error for NO_COLOR
 
         // Get Piece or no piece in all four straight directions
@@ -235,7 +259,7 @@ export default class GameModel {
                 if (loc != "") {
                     const piece: Piece = this.getBoardSquareContents(loc);
                     if (piece.type !== PieceType.NO_TYPE) {
-                        pieces.push(piece);
+                        pieces.push([piece,loc,BoardModel.getStraightBoardLocations(location, mag*dir*offset, oppmag*dir*offset)]);
                         break; // got the terminal piece in this direction; now break out of for loop
                     }
                 }
@@ -245,29 +269,42 @@ export default class GameModel {
             }
         }
 
+        const threats:Threat[] = [];
+
         // For each piece, check if Piece is threat
-            // return true or false accordingly
-        for(let piece of pieces) {
+        for(let [piece,threatLocation,threatPath] of pieces) {
             if(!isEqual(piece,NO_PIECE) && piece.color === oppColor) {
                 if(piece.type === PieceType.QUEEN || piece.type === PieceType.ROOK) {
-                    return true;
+                    threats.push(new Threat(threatLocation,piece.type,threatPath));
                 }
             }
         }
 
-        return false;
+        if(threats.length > 0) {
+            let ts:ThreatStatus = new ThreatStatus(true, location, Piece.getPlayer(locationColor));
+            ts.addThreats(threats);
+            return ts;
+        }
+
+        return new ThreatStatus(false, location, Piece.getPlayer(locationColor));
     }
 
-    private isThreatenedLShaped(location:BoardLocation,locationColor:PieceColor):boolean {
+    private isThreatenedLShaped(location:BoardLocation,locationColor:PieceColor):ThreatStatus {
         const locs = BoardModel.getValidLShapedOffsets(location);
         const oppColor:PieceColor = locationColor === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE; // TODO add error for NO_COLOR
+        const threats:Threat[] = [];
         for(let offsetLoc of locs) {
             const piece:Piece = this.getBoardSquareContents(offsetLoc);
             if(piece.type === PieceType.KNIGHT
                 && piece.color === oppColor) {
-                return true;
+                threats.push(new Threat(offsetLoc,piece.type,[])); // for a knight, the path doesn't matter since they can jump over pieces
             }
         }
-        return false;
+        if(threats.length > 0) {
+            const ts:ThreatStatus = new ThreatStatus(true, location, Piece.getPlayer(locationColor));
+            ts.addThreats(threats);
+            return ts;
+        }
+        return new ThreatStatus(false, location, Piece.getPlayer(locationColor));
     }
 }

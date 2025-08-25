@@ -45,6 +45,10 @@ export default abstract class Piece {
             return acc || curr.makeMove(gameModel, from, to, rollback)
         }, false);
     }
+
+    static getPlayer(locationColor: PieceColor) {
+        return locationColor === PieceColor.WHITE ? "WHITE" : "BLACK";
+    }
 }
 
 // TODO Write tests: Numbering is important here and should NOT be changed

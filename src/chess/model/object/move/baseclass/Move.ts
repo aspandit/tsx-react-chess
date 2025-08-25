@@ -89,8 +89,8 @@ export default abstract class Move {
 
         // Rollback and return false if own king is threatened after move - a player cannot put themselves in check
             // if the king is being moved make sure to see if they are moving into a checked location
-        moveAllowed = !((movingPiece.type === PieceType.KING && gameModel.isBoardLocationThreatened(to, movingPiece.color))
-            || (movingPiece.type !== PieceType.KING && gameModel.isBoardLocationThreatened(gameModel.getKingLocation(), movingPiece.color)));
+        moveAllowed = !((movingPiece.type === PieceType.KING && gameModel.isBoardLocationThreatened(to, movingPiece.color).underThreat)
+            || (movingPiece.type !== PieceType.KING && gameModel.isBoardLocationThreatened(gameModel.getKingLocation(), movingPiece.color).underThreat));
 
         if(rollback || !moveAllowed) {
             gameModel.setBoardSquareContents(to, toLocPiece);

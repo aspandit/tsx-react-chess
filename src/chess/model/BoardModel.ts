@@ -6,6 +6,7 @@ import Queen from "./object/piece/Queen";
 import King from "./object/piece/King";
 import Pawn from "./object/piece/Pawn";
 import NoPiece, {NO_PIECE} from "./object/piece/NoPiece";
+import {openInterval} from "../utils/Utils";
 
 export default class BoardModel {
     private readonly _board: Piece[][];
@@ -178,6 +179,37 @@ export default class BoardModel {
         }
 
         return ret;
+    }
+
+    static getDiagonalBoardLocations(loc:BoardLocation,roffset:number,coffset:number):BoardLocation[] {
+        const locs:BoardLocation[] = [];
+        if(Math.abs(roffset) === 1 && Math.abs(coffset) === 1) {
+            return locs;
+        }
+        for(let r of openInterval(roffset/Math.abs(roffset),roffset)) {
+            for(let c of openInterval(coffset/Math.abs(coffset),coffset)) {
+                locs.push(BoardModel.getValidBoardLocationByOffset(loc,r,c));
+            }
+        }
+        return locs.filter((loc:BoardLocation) => loc != "");
+    }
+
+    static getStraightBoardLocations(loc:BoardLocation,roffset:number,coffset:number):BoardLocation[] {
+        const locs:BoardLocation[] = [];
+        if(Math.abs(roffset) === 1 || Math.abs(coffset) === 1) {
+            return locs;
+        }
+        if(roffset === 0) {
+            for (let c of openInterval(coffset / Math.abs(coffset), coffset)) {
+                locs.push(BoardModel.getValidBoardLocationByOffset(loc, BoardModel.parseBoardLocation(loc).rowIndex, c));
+            }
+        }
+        else { //(coffset === 0)
+            for (let r of openInterval(roffset / Math.abs(roffset), roffset)) {
+                locs.push(BoardModel.getValidBoardLocationByOffset(loc, r, BoardModel.parseBoardLocation(loc).colIndex));
+            }
+        }
+        return locs.filter((loc:BoardLocation) => loc != "");
     }
 
     updateKingLocation(king: King, to: BoardLocation) {
