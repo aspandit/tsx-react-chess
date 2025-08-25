@@ -6,7 +6,7 @@ import {NO_PIECE} from "../piece/NoPiece";
 import {Direction} from "../Direction";
 
 export default class EnPassant extends Move {
-    _grantorLocation:BoardLocation; // location of the Pawn that granted the EnPassant ability
+    private readonly _grantorLocation:BoardLocation; // location of the Pawn that granted the EnPassant ability
 
     constructor(captureRequired: boolean, captureProhibited: boolean, clearPathOptional: boolean, direction: Direction, grantorLocation:BoardLocation) {
         super(captureRequired, captureProhibited, clearPathOptional, direction);
