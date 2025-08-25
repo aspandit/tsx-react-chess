@@ -1,4 +1,4 @@
-import Piece, {PieceType} from "../../piece/baseclass/Piece";
+import Piece, {PieceColor, PieceType} from "../../piece/baseclass/Piece";
 import BoardModel from "../../../BoardModel";
 import {NO_PIECE} from "../../piece/NoPiece";
 import {Direction} from "../../Direction";
@@ -33,9 +33,10 @@ export default abstract class Move {
         if(!this.isPathShapeCorrect(fromLoc, toLoc)) {
             return false; // no need to check anything else if the path shape is not correct
         }
-        const pathClear = this.isPathClear(this.getPath(gameModel, fromLoc, toLoc));
-        const capturing = this.isCapturing(captureSquareContents);
-        if ((this._clearPathOptional || pathClear)
+        const pathClear:boolean = this.isPathClear(this.getPath(gameModel, fromLoc, toLoc));
+        const movingColor:PieceColor = gameModel.getBoardSquareContents(from).color;
+        const capturing:boolean = this.isCapturing(captureSquareContents);
+        if ((this._clearPathOptional || pathClear) && movingColor !== captureSquareContents.color
             && ((!this._captureRequired || capturing) && (!this._captureProhibited || !capturing))) {
             return this.doMove(gameModel, from, to, rollback);
         } else {
@@ -67,7 +68,7 @@ export default abstract class Move {
     }
 
     private isCapturing(captureSquareContents: Piece): boolean {
-        return !isEqual(captureSquareContents, NO_PIECE); // TODO check opposing color piece is being captured
+        return !isEqual(captureSquareContents, NO_PIECE);
     }
 
     /**

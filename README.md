@@ -6,6 +6,5 @@ This repository contains a two-player chess game written primarily in TypeScript
 2. Run `npm run dev` in the base directory.
 
 # Pending Standard Chess Features
-- Checkmate detection
 - Castling
 - Pawn Promotion

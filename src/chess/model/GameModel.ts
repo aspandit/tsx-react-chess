@@ -32,6 +32,7 @@ export default class GameModel {
      * Called after turn is complete.
      */
     toggleTurn() {
+        const oppPlayer = this.player;
         if (this.player.toString() === "WHITE") {
             this.player = "BLACK";
             // remove en passant for white pawns in array and clear array
@@ -47,18 +48,19 @@ export default class GameModel {
         }
 
         const currColor: PieceColor = this.player.toString() === "WHITE" ? PieceColor.WHITE : PieceColor.BLACK;
-        if(this.checkForCheck()) {
+        const ts:ThreatStatus = this.checkForCheck();
+        if(ts.underThreat) {
             // Check for checkmate condition
-            //  if(
-            //     // 1) can the checking piece be captured AND, if so, will that release the current player from check
-            //      this.canCheckingPieceBeCaptured()
-            //     // 2) can the current player's king be moved out of check
-            //     || this.canKingMoveOutOfCheck()
-            //     // 3) can the current player move another piece to block the checking piece
-            //     || this.canCheckBeBlocked()
-            //  ) {
-            //      this.endMatch(this.player);
-            //  }
+             if(!( // NOT the OR of the three conditions below
+                // 1) can the checking piece be captured AND, if so, will that release the current player from check
+                 this.canCheckingPieceBeCaptured(ts)
+                // 2) can the current player's king be moved out of check
+                || this.canKingMoveOutOfCheck(this.getBoardSquareContents(this.getKingLocation()),this.getKingLocation())
+                // 3) can the current player move another piece to block the checking piece
+                || this.canCheckBeBlocked(currColor,ts)
+             )) {
+                 this.endMatch(oppPlayer);
+             }
         }
         else {
             // Check for stalemate condition - TODO this is inefficient, but works: refactor at some point
@@ -97,15 +99,16 @@ export default class GameModel {
      * Checks if the current player is in check and returns true if so. This method should be called after
      * the turn is over.
      */
-    checkForCheck():boolean {
+    checkForCheck():ThreatStatus {
         const currColor:PieceColor = this.player === "WHITE" ? PieceColor.WHITE : PieceColor.BLACK;
-        if(this.isBoardLocationThreatened(this.getKingLocation(),currColor).underThreat) {
+        const ts:ThreatStatus = this.isBoardLocationThreatened(this.getKingLocation(),currColor);
+        if(ts.underThreat) {
             this._checkedPlayer = this.player;
-            return true;
+            return ts;
         }
         else {
             this._checkedPlayer = "";
-            return false;
+            return new ThreatStatus(false,this.getKingLocation(),Piece.getPlayer(currColor));
         }
     }
 
@@ -233,6 +236,9 @@ export default class GameModel {
                 else if(piece.type === PieceType.QUEEN || piece.type === PieceType.BISHOP) {
                     threats.push(new Threat(threatLocation,piece.type,threatPath));
                 }
+                else if(piece.type === PieceType.KING) {
+                    threats.push(new Threat(threatLocation,piece.type,threatPath));
+                }
             }
         }
 
@@ -306,5 +312,79 @@ export default class GameModel {
             return ts;
         }
         return new ThreatStatus(false, location, Piece.getPlayer(locationColor));
+    }
+
+    static flipPlayertoOppositePieceColor(p:Player):PieceColor {
+        return p == "BLACK" ? PieceColor.WHITE : PieceColor.BLACK;
+    }
+
+    /**
+     * Assumes the king is under threat
+     * @param ts the threat status object for current king threat
+     * @private
+     */
+    private canCheckingPieceBeCaptured(ts:ThreatStatus):boolean {
+        if(ts.threatInfo?.threats.length == 1) {
+            const threatLocation: BoardLocation = ts.threatInfo.threats[0].threatLocation;
+            const threateningPlayerTS: ThreatStatus = this.isBoardLocationThreatened(threatLocation,
+                GameModel.flipPlayertoOppositePieceColor(ts.threatInfo.threatenedPlayer));
+            const to: BoardLocation = threateningPlayerTS.threatInfo ? threateningPlayerTS.threatInfo?.threatenedLocation : "";
+            if(to != "" && threateningPlayerTS.threatInfo && threateningPlayerTS.threatInfo?.threats.length > 0) {
+                for (let t of threateningPlayerTS.threatInfo?.threats) { // cycle through threats to piece threatening the king
+                    const from: BoardLocation = t.threatLocation;
+                    const potentialCapPiece: Piece = this.getBoardSquareContents(t.threatLocation);
+                    if (potentialCapPiece.makeMove(this,from,to,true)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private canKingMoveOutOfCheck(king: Piece,location:BoardLocation):boolean {
+        const adjs:BoardLocation[] = [BoardModel.getValidBoardLocationByOffset(location,-1,1),
+                                        BoardModel.getValidBoardLocationByOffset(location,1,-1),
+                                        BoardModel.getValidBoardLocationByOffset(location,-1,-1),
+                                        BoardModel.getValidBoardLocationByOffset(location,1,1),
+                                        BoardModel.getValidBoardLocationByOffset(location,-1,0),
+                                        BoardModel.getValidBoardLocationByOffset(location,0,1),
+                                        BoardModel.getValidBoardLocationByOffset(location,0,-1),
+                                        BoardModel.getValidBoardLocationByOffset(location,1,0)]
+                                    .filter(loc => loc != "");
+
+        for(let to of adjs) {
+            if(king.makeMove(this,location,to,true)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Assumes king is under threat, ie, ts.underThreat is true.
+     * @param currColor
+     * @param ts
+     * @private
+     */
+    private canCheckBeBlocked(currColor:PieceColor,ts:ThreatStatus):boolean {
+        if(!ts.threatInfo || ts.threatInfo.threats.length > 1) {
+            return false; // cannot block more than one threat in one move
+        }
+        // Check each piece to see if it can be moved into path - TODO this is inefficient, but works: refactor at some point
+        const board: Piece[][] = this.boardCopy;
+        for(let r: number = 0;r < board.length;r++) {
+            for(let c: number = 0;c < board[r].length;c++) {
+                const piece: Piece = board[r][c];
+                if(piece.color === currColor) {
+                    for(let loc of ts.threatInfo.threats[0].threatPath) {
+                        if (piece.makeMove(this, BoardModel.getValidBoardLocationByOffset("a8",r,c), loc, true)) {
+                            return true; // as soon as a legal move is found to block the current check, return true
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
