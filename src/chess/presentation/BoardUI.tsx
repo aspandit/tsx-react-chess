@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {GameLogic} from "../container/GameLogic";
 import React from 'react';
 import Controls from "./ControlsUI";
+import PawnPromotionPalette from "./PawnPromotionPalette";
 
 export default function Game() {
     const [gameLogic,setGameLogic] = useState<GameLogic>(new GameLogic()); // TODO ***determine whether this and other classes need to be function-based***
@@ -19,6 +20,7 @@ export default function Game() {
                 </span>
                 <span className={"right-margin"}>
                     <span className={"status-bar"}>{statusMessage}</span>
+                    <PawnPromotionPalette gameLogic={gameLogic}/>
                     <Controls className={"controls"} clicks={clicks} setGameLogic={setGameLogic} setClicks={setClicks} setStatusMessage={setStatusMessage} />
                 </span>
             </div>

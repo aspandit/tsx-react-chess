@@ -36,6 +36,14 @@ export class GameLogic {
         return bsv;
     }
 
+    get waitOnPawnPromotion():boolean {
+        return true;
+    }
+
+    get currPlayer():Player {
+        return this._gameModel.player;
+    }
+
     get info() {
         const checkedPlayer:string = this._gameModel.checkedPlayer != "" ? capitalizeFirstLetter(this._gameModel.checkedPlayer) + " is in check." : "";
         const winner:string = this._gameModel.gameOver && this._gameModel.winner != "" ? capitalizeFirstLetter(this._gameModel.winner) + " wins." : "";

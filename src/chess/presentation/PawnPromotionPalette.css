@@ -1,0 +1,14 @@
+.palette table {
+    border: #1a1a1a solid 0.1em;
+    border-spacing: 2px;
+}
+
+.palette-body td {
+    padding: 0.1em;
+    font-size: x-large;
+}
+
+.palette-body td span:hover {
+    border: 0.1em solid !important;
+    padding: 0;
+}
