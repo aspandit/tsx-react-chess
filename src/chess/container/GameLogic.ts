@@ -1,14 +1,13 @@
 import BoardModel from "../model/BoardModel";
 import GameModel from "../model/GameModel";
-import Piece, {PieceColor} from "../model/object/piece/baseclass/Piece";
+import Piece, {PieceColor, PieceType} from "../model/object/piece/baseclass/Piece";
 import {NO_PIECE} from "../model/object/piece/NoPiece";
 import {capitalizeFirstLetter, isEqual} from "../utils/Utils";
 
-// TODO add Castle move with check for check in castled king squares
-// TODO add pawn promotion
 export class GameLogic {
     private readonly _gameModel:GameModel = new GameModel();
     private _selection: BoardLocation = "";
+    private _promotingPawnLocation: BoardLocation = "";
 
     static get colCoordinates():string[] {
         return [...BoardModel.colCoordinates];
@@ -37,7 +36,11 @@ export class GameLogic {
     }
 
     get waitOnPawnPromotion():boolean {
-        return true;
+        return this._promotingPawnLocation !== "";
+    }
+
+    get promotingPawnLocation():BoardLocation {
+        return this._promotingPawnLocation;
     }
 
     get currPlayer():Player {
@@ -80,6 +83,13 @@ export class GameLogic {
         return this._selection;
     }
 
+    promotePawn(color:PieceColor, type:PieceType):void {
+        if(this._gameModel.promotePawn(color, type, this._promotingPawnLocation)) {
+            this._promotingPawnLocation = "";
+            this._gameModel.toggleTurn();
+        }
+    }
+
     private isSquareOccupiedByOwnPiece(coord:BoardLocation):boolean {
         const piece:Piece = this._gameModel.getBoardSquareContents(coord);
         return !isEqual(piece, NO_PIECE) && GameLogic.isOwnPiece(this._gameModel.player, piece);
@@ -97,11 +107,27 @@ export class GameLogic {
     private movePiece(from:BoardLocation, to:BoardLocation):boolean {
         const piece:Piece = this._gameModel.getBoardSquareContents(from);
         if(!isEqual(piece,NO_PIECE) && piece.makeMove(this._gameModel,from,to,false)) {
-            this.toggleTurn();
+            if(!this.checkForPawnPromotion()) { // do NOT toggle turn here during pawn promotion
+                this.toggleTurn();
+            }
             return true; // TODO make piece object for presentation/container; return captured piece or no piece to UI
         }
-        return false; // TODO think about passing back more info for this case(no move made)
-        /* TODO Pass back result object instead of boolean: moveMade:boolean, catpturedPiece:Piece, noMoveReason:string */
+        return false;
+    }
+
+    private checkForPawnPromotion():boolean {
+        for(let c of BoardModel.colCoordinates) {
+            const potentialWhitePawn:Piece = this._gameModel.getBoardSquareContents(c+"8" as BoardLocation);
+            if(potentialWhitePawn.type === PieceType.PAWN && potentialWhitePawn.color === PieceColor.WHITE) {
+                this._promotingPawnLocation = c+"8" as BoardLocation;
+            }
+
+            const potentialBlackPawn:Piece = this._gameModel.getBoardSquareContents(c+"1" as BoardLocation);
+            if(potentialBlackPawn.type === PieceType.PAWN && potentialBlackPawn.color === PieceColor.BLACK) {
+                this._promotingPawnLocation = c+"1" as BoardLocation;
+            }
+        }
+        return this._promotingPawnLocation !== "";
     }
 
     private toggleTurn() {

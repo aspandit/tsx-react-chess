@@ -3,10 +3,13 @@ import React from "react";
 import {GameLogic} from "../container/GameLogic";
 import Sha256 from "crypto-js/sha256";
 import CryptoJS from "crypto-js";
+import {PieceColor, PieceType} from "../model/object/piece/baseclass/Piece";
 
-export default function Controls(props: {className: string, clicks: BoardLocation[], setGameLogic:(gl:GameLogic) => void, setClicks:(clicks: BoardLocation[]) => void, setStatusMessage:(statusMessage:string) => void}) {
+export default function Controls(props: {className: string, clicks: BoardLocation[], setGameLogic:(gl:GameLogic) => void, setClicks:(clicks: BoardLocation[]) => void, setStatusMessage:(statusMessage:string) => void, promotions:[number,PieceColor,PieceType][], setPromotions:(promotions:[number,PieceColor,PieceType][]) => void}) {
     const clicks = props.clicks;
     const setClicks = props.setClicks;
+    const promotions = props.promotions;
+    const setPromotions = props.setPromotions;
     const setGameLogic = props.setGameLogic;
     const setStatusMessage = props.setStatusMessage;
 
@@ -16,10 +19,17 @@ export default function Controls(props: {className: string, clicks: BoardLocatio
         reader.readAsText(event.target.files[0]);
         reader.onloadend = () => {
             const iClicks:BoardLocation[] = JSON.parse(reader.result as string).clicks;
+            const iPromotions:[number,PieceColor,PieceType][] = JSON.parse(reader.result as string).promotions;
             const gl:GameLogic = new GameLogic();
-            for(let click of iClicks) {
+            for(let idx:number = 0;idx < iClicks.length; idx++) {
+                const click:BoardLocation = iClicks[idx];
+                const pIdx:number = iPromotions.findIndex((val) => val[0] === idx);
                 gl.selectSquare(click);
+                if(pIdx > -1) {
+                    gl.promotePawn(iPromotions[pIdx][1],iPromotions[pIdx][2]);
+                }
             }
+            setPromotions(promotions);
             setClicks(iClicks);
             setGameLogic(gl);
             setStatusMessage(gl.info);
@@ -28,7 +38,7 @@ export default function Controls(props: {className: string, clicks: BoardLocatio
 
     const exportGameModel = () => {
         const boards:string[][][] = generateExportData();
-        const content:string = JSON.stringify({clicks: clicks, boards: boards});
+        const content:string = JSON.stringify({clicks: clicks, boards: boards, promotions: promotions});
         const blob = new Blob([content], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
 

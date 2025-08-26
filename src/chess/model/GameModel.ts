@@ -6,6 +6,10 @@ import {NO_PIECE} from "./object/piece/NoPiece";
 import {isEqual} from "../utils/Utils";
 import {Direction} from "./object/Direction";
 import ThreatStatus, {Threat} from "../container/object/ThreatStatus";
+import Rook from "./object/piece/Rook";
+import Knight from "./object/piece/Knight";
+import Bishop from "./object/piece/Bishop";
+import Queen from "./object/piece/Queen";
 
 export default class GameModel {
     private readonly _boardModel: BoardModel;
@@ -193,6 +197,25 @@ export default class GameModel {
             return threat;
         }
         return new ThreatStatus(false, location, locationColor == PieceColor.WHITE ? "WHITE" : "BLACK");
+    }
+
+    promotePawn(color: PieceColor, type: PieceType, loc:BoardLocation):boolean {
+        switch(type) {
+            case PieceType.QUEEN:
+                this.setBoardSquareContents(loc,new Queen(color,loc));
+                return true;
+            case PieceType.BISHOP:
+                this.setBoardSquareContents(loc,new Bishop(color,loc));
+                return true;
+            case PieceType.KNIGHT:
+                this.setBoardSquareContents(loc,new Knight(color,loc));
+                return true;
+            case PieceType.ROOK:
+                this.setBoardSquareContents(loc,new Rook(color,loc));
+                return true;
+            default:
+                return false;
+        }
     }
 
     private isThreatenedDiagonally(location:BoardLocation,locationColor:PieceColor):ThreatStatus {

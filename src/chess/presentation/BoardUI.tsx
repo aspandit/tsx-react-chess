@@ -4,45 +4,48 @@ import {GameLogic} from "../container/GameLogic";
 import React from 'react';
 import Controls from "./ControlsUI";
 import PawnPromotionPalette from "./PawnPromotionPalette";
+import {PieceColor, PieceType} from "../model/object/piece/baseclass/Piece";
 
 export default function Game() {
     const [gameLogic,setGameLogic] = useState<GameLogic>(new GameLogic()); // TODO ***determine whether this and other classes need to be function-based***
     const [selection, setSelection] = useState<BoardLocation>("");
     const [clicks, setClicks] = useState<BoardLocation[]>([]);
+    const [promotions, setPromotions] = useState<[number,PieceColor,PieceType][]>([]);
     const [statusMessage, setStatusMessage] = useState<string>("White to move.");
 
-    return (
-        <>
-            <div className={"main"}>
-                <span>
-                    <BoardUI className={"board"} selection={selection} board={gameLogic.boardStringView} gameLogic={gameLogic} clicks={clicks} setClicks={setClicks}
-                                setStatusMessage={setStatusMessage} setSelection={setSelection} />
-                </span>
-                <span className={"right-margin"}>
-                    <span className={"status-bar"}>{statusMessage}</span>
-                    <PawnPromotionPalette gameLogic={gameLogic}/>
-                    <Controls className={"controls"} clicks={clicks} setGameLogic={setGameLogic} setClicks={setClicks} setStatusMessage={setStatusMessage} />
-                </span>
-            </div>
-        </>
-    );
-}
+    const handleSquareClick = (coords:BoardLocation, color:PieceColor | null, type: PieceType | null) => {
+        if(color && type) {
+            promotions.push([clicks.length,color,type]);
+            setPromotions(promotions);
+        }
 
-function BoardUI(props: {className: string, selection:BoardLocation, board:string[][], gameLogic:GameLogic, clicks:BoardLocation[], setClicks:(clicks:BoardLocation[]) => void, setSelection:(selection:BoardLocation) => void, setStatusMessage:(statusMessage:string) => void}) {
-    const selection:BoardLocation = props.selection;
-    const gameLogic:GameLogic = props.gameLogic;
-    const clicks:BoardLocation[] = props.clicks;
-    const setClicks:(clicks:BoardLocation[]) => void = props.setClicks;
-    const setSelection:(selection:BoardLocation) => void = props.setSelection;
-    const setStatusMessage:(statusMessage:string) => void = props.setStatusMessage;
-
-    const handleSquareClick = (coords:BoardLocation) => {
         clicks.push(coords);
         setClicks(clicks);
 
         setSelection(gameLogic.selectSquare(coords));
         setStatusMessage(gameLogic.info);
     };
+
+    return (
+        <>
+            <div className={"main"}>
+                <span>
+                    <BoardUI className={"board"} selection={selection} board={gameLogic.boardStringView} handleSquareClick={handleSquareClick} />
+                </span>
+                <span className={"right-margin"}>
+                    <span className={"status-bar"}>{statusMessage}</span>
+                    <PawnPromotionPalette gameLogic={gameLogic} handleSquareClick={handleSquareClick} />
+                    <Controls className={"controls"} clicks={clicks} setGameLogic={setGameLogic} setClicks={setClicks} setStatusMessage={setStatusMessage}
+                                promotions={promotions} setPromotions={setPromotions} />
+                </span>
+            </div>
+        </>
+    );
+}
+
+function BoardUI(props: {className: string, selection:BoardLocation, board:string[][], handleSquareClick:(coords:BoardLocation, color:PieceColor | null, type: PieceType | null) => void}) {
+    const selection:BoardLocation = props.selection;
+    const handleSquareClick = props.handleSquareClick;
 
     useEffect(() => {
         // Clear previous selection(s)
@@ -79,7 +82,7 @@ function BoardUI(props: {className: string, selection:BoardLocation, board:strin
     );
 }
 
-function Row(props: { className: string, coordinate: string, row: string[], onSquareClick: (coord:BoardLocation) => void }) {
+function Row(props: { className: string, coordinate: string, row: string[], onSquareClick: (coord:BoardLocation, color:PieceColor | null, type: PieceType | null) => void }) {
     return (
         <span className={"row"}>
             <CoordinateLabel className={"rowCoordinate"} coordinate={props.coordinate}/>
@@ -101,7 +104,7 @@ function CoordinateLabel(props: { className: string, coordinate: string }) {
     );
 }
 
-function Square(props: { key: string, className: string, coordinate: string, content: string, onSquareClick: (coord:BoardLocation) => void }) {
+function Square(props: { key: string, className: string, coordinate: string, content: string, onSquareClick: (coord:BoardLocation, color:PieceColor | null, type: PieceType | null) => void }) {
     function getColorClass(coordinate: string) {
         let coords: string[] = coordinate.split("");
 
@@ -115,10 +118,10 @@ function Square(props: { key: string, className: string, coordinate: string, con
     );
 }
 
-function SquareInner(props: { content: string, coordinate: string, onSquareClick: (coord:BoardLocation) => void }) {
+function SquareInner(props: { content: string, coordinate: string, onSquareClick: (coord:BoardLocation, color:PieceColor | null, type: PieceType | null) => void }) {
     function squareClick(event: React.MouseEvent<HTMLSpanElement, MouseEvent>, coordinate: string) {
         event.preventDefault();
-        props.onSquareClick(coordinate as BoardLocation);
+        props.onSquareClick(coordinate as BoardLocation, null, null);
     }
 
     return (
