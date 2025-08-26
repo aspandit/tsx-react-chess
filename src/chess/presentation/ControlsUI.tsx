@@ -29,7 +29,7 @@ export default function Controls(props: {className: string, clicks: BoardLocatio
                     gl.promotePawn(iPromotions[pIdx][1],iPromotions[pIdx][2]);
                 }
             }
-            setPromotions(promotions);
+            setPromotions(iPromotions);
             setClicks(iClicks);
             setGameLogic(gl);
             setStatusMessage(gl.info);
