@@ -1,5 +1,5 @@
 # Chess
-This repository contains a two-player chess game written primarily in TypeScript and leveraging the React framework. This project was created from scratch. No vibe coding was used to create/complete this project.
+This repository contains a two-player chess game written primarily in TypeScript and leveraging the React framework. This project was created from scratch using Vite. No vibe coding was used to create/complete this project.
 
 ![Pawn Promotion Scenario Screenshot](public/tsx-react-chess-screenshot.png "Chess")
 
