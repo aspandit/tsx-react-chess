@@ -1,8 +1,8 @@
 :root {
     --square-border-thickness: 0.05em;
-    --square-width: 4em;
-    --square-height: 4em;
-    --piece-size: 2em;
+    --square-width: 5em;
+    --square-height: 5em;
+    --piece-size: 3em;
 }
 
 .right-margin {
