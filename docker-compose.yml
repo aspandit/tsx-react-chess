@@ -1,0 +1,10 @@
+services:
+  chess-app:
+    container_name: chess-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=dev
+    ports:
+      - "127.0.0.1:5173:5173"
